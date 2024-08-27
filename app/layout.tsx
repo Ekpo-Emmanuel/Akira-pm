@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Bricolage_Grotesque } from "next/font/google";
 import { KindeClientProvider } from '@/app/providers/KindeClientProvider'
 import { ConvexClientProvider } from '@/app/providers/ConvexClientProvider'
+import { Toaster, toast } from 'sonner'
 import "./globals.css";
 
 
@@ -23,6 +24,7 @@ export default function RootLayout({
       <body className={bricolage.className}>
         <KindeClientProvider>
           <ConvexClientProvider>
+            <Toaster richColors />
             {children}
           </ConvexClientProvider>
         </KindeClientProvider>
