@@ -14,7 +14,12 @@ export default function InviteUserForm({ organizationId }: { organizationId: Id<
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await inviteUser({ organizationId, email, role });
+      await inviteUser({ 
+        organizationId: organizationId,
+        email: email,
+        role: role,
+        senderId: 'convex',
+       });
       setEmail('');
       alert('Invitation sent successfully!');
     } catch (error) {
