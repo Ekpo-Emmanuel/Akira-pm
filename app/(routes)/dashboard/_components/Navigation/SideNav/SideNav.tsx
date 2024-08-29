@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import { Home, Settings, FileText, PanelsTopLeft, ChevronDown, Plus, Landmark } from 'lucide-react';
 import { HiOutlineBuildingOffice2 } from "react-icons/hi2";
@@ -13,18 +13,40 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useUser } from "@/app/contexts/UserProvider";
+import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
 
 type Checked = DropdownMenuCheckboxItemProps["checked"]
 
 export default function SideNav() {
     const { user }: any = useUser();
-    const [isCollapsed, setIsCollapsed] = useState(false);
+    const [isSmallScreen, setIsSmallScreen] = useState(false);
+    const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
     const [showStatusBar, setShowStatusBar] = useState<Checked>(true)
     const [showActivityBar, setShowActivityBar] = useState<Checked>(false)
     const [showPanel, setShowPanel] = useState<Checked>(false)
 
+    useEffect(() => {
+        const mediaQuery = window.matchMedia('(max-width: 640px)');
+        
+        const handleMediaQueryChange = (e: MediaQueryListEvent) => {
+          setIsSmallScreen(e.matches);
+          setIsCollapsed(e.matches);
+        };
+      
+        setIsSmallScreen(mediaQuery.matches);
+        setIsCollapsed(mediaQuery.matches);
+      
+        mediaQuery.addListener(handleMediaQueryChange);
+      
+        return () => {
+          mediaQuery.removeListener(handleMediaQueryChange);
+        };
+    }, []);
+
     const toggleSidebar = () => {
-      setIsCollapsed(!isCollapsed);
+        if (!isSmallScreen) {
+          setIsCollapsed(!isCollapsed);
+        }
     };
     
     const shortenName = (name: string, length: number) => {
@@ -67,10 +89,10 @@ export default function SideNav() {
                         }
                     </div>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-[250px] bg-white dark:bg-workspaceDark  dark:border-borderDark">
+                <DropdownMenuContent className="w-[250px] bg-white dark:bg-[#2A2E35]  dark:border-[#656f7d6d]">
                     <DropdownMenuLabel>
                         <div className={clsx(
-                            "relative flex items-center space-x-2 dark:hover:bg-[#2A2E35] focus:bg-[#2A2E35] rounded-md cursor-pointer",
+                            "relative flex items-center space-x-2 dark:hover:bg-workspaceDark focus:bg-[#2A2E35] rounded-md cursor-pointer",
                             isCollapsed && "justify-center"
                         )}>
                             <div className={clsx(
@@ -84,11 +106,12 @@ export default function SideNav() {
                             </div>
                         </div>
                     </DropdownMenuLabel>
-                    <DropdownMenuSeparator className="dark:bg-borderDark" />
+                    <DropdownMenuSeparator className="dark:bg-[#656f7d6d]" />
                     <DropdownMenuCheckboxItem
                         checked={showStatusBar}
                         onCheckedChange={setShowStatusBar}
-                        >
+                        className="hover:bg-[#656f7d6d]"
+                    >
                         Status Bar
                     </DropdownMenuCheckboxItem>
                     <DropdownMenuCheckboxItem
@@ -116,14 +139,14 @@ export default function SideNav() {
                     </DropdownMenuCheckboxItem>
                 </DropdownMenuContent>
             </DropdownMenu>
-            {!isCollapsed && 
+            {!isSmallScreen && !isCollapsed && (
                 <button
                     className="text-gray-400 hover:text-white"
                     onClick={toggleSidebar}
                 >
                     <PanelsTopLeft size={20} strokeWidth={1} />
                 </button>
-            }
+            )}
         </div>
         <nav className={clsx(
             "flex flex-col px-2 pb-4 text-sm border-b dark:border-[#656f7d6d]",
@@ -131,7 +154,7 @@ export default function SideNav() {
         )}>
             {sideBarItems.map((item) => (
                 <a
-                    href="#"
+                    href={item.link}
                     className={clsx(
                         "flex items-center space-x-2 p-2 font-light rounded-md hover:bg-[#eaeaf097] transition-colors ",
                         "dark:hover:bg-[#2A2E35]",
@@ -151,12 +174,17 @@ export default function SideNav() {
             ))}
 
         </nav>
+            {!isSmallScreen && (
                 <button
-                    className="text-gray-400 hover:text-white"
-                    onClick={toggleSidebar}
+                className="text-gray-400 hover:text-white"
+                onClick={toggleSidebar}
                 >
-                    <PanelsTopLeft size={20} strokeWidth={1} />
+                <PanelsTopLeft size={20} strokeWidth={1} />
                 </button>
+            )}
+        <LogoutLink>
+            Logout
+        </LogoutLink>
       </div>
     );
 }
@@ -170,26 +198,26 @@ const sideBarItems = [
     {
         name: "Inbox",
         icon: Home,
-        link: '/',
+        link: '#',
     },
     {
         name: "Docs",
         icon: Home,
-        link: '/',
+        link: '#',
     },
     {
-        name: "Dashboards",
+        name: "Dashboard",
         icon: Home,
-        link: '/',
+        link: '/dashboard',
     },
     {
-        name: "Timesheets",
+        name: "Workspaces",
         icon: Home,
-        link: '/',
+        link: '/dashboard/workspaces',
     },
     {
         name: "Organizations",
         icon: Landmark,
-        link: '/organizations',
+        link: '/dashboard/organization',
     },
 ]
