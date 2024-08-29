@@ -37,3 +37,13 @@ export const getUserOrganization = query({
     return organization ? organization._id : null;
   },
 });
+
+export const getUser = query({
+  args: { userId: v.string() },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("users")
+      .withIndex("by_kinde_id", (q) => q.eq("kindeId", args.userId))
+      .first();
+  },
+});
