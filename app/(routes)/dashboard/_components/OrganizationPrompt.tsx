@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useCreateOrganization, useJoinOrganization, useGetUserOrganization } from '@/app/(routes)/dashboard/_utils/organizationUtils';
 import { Id } from "@/convex/_generated/dataModel";
-import { toast } from 'sonner';
 
 export default function OrganizationPrompt({ userId }: { userId: string }) {
   const [orgName, setOrgName] = useState('');
@@ -18,7 +17,6 @@ export default function OrganizationPrompt({ userId }: { userId: string }) {
     if (orgName) {
       try {
         await createOrganization(orgName, userId);
-        toast.success('Organization created successfully!');
       } catch (error) {
         // Handle error (e.g., show error message to user)
       }
@@ -39,7 +37,7 @@ export default function OrganizationPrompt({ userId }: { userId: string }) {
 
 
   return (
-    <section className="flex items-center justify-center w-full h-screen bg-gray-50 dark:bg-gray-900">
+    <section className="flex items-center justify-center w-full h-screen bg-gray-50 dark:bg-gray-900 fixed z-50">
       <div className="fixed inset-0 overflow-y-auto h-full w-full flex items-center justify-center">
         <div className="bg-white  dark:bg-gray-800 border dark:border-gray-700 p-6 sm:p-8 rounded-lg shadow-xl">
           <h2 className="text-2xl font-bold mb-4 dark:text-white">Welcome! Let's get you started</h2>
