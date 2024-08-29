@@ -1,4 +1,5 @@
-import { mutation, query } from "./_generated/server";
+import { api } from "./_generated/api";
+import { mutation, query, action } from "./_generated/server";
 import { v } from "convex/values";
 
 export const createInvitation = mutation({
@@ -6,23 +7,18 @@ export const createInvitation = mutation({
     organizationId: v.id("organizations"),
     email: v.string(),
     role: v.string(),
+    senderId: v.string(), 
   },
   handler: async (ctx, args) => {
-    const { organizationId, email, role } = args;
+    const { organizationId, email, role, senderId } = args;
 
-    // Check if the user making the invitation is authenticated
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      throw new Error("Not authenticated");
-    }
-
-    // Check if the user is part of the organization (you might need to adjust this based on your user schema)
-    const user = await ctx.db
+    // Check if the sender is part of the organization
+    const sender = await ctx.db
       .query("users")
-      .withIndex("by_kinde_id", (q) => q.eq("kindeId", identity.subject))
+      .withIndex("by_kinde_id", (q) => q.eq("kindeId", senderId))
       .first();
 
-    if (!user || user.organizationId !== organizationId) {
+    if (!sender || sender.organizationId !== organizationId) {
       throw new Error("Not authorized to invite to this organization");
     }
 
@@ -44,48 +40,12 @@ export const createInvitation = mutation({
       email,
       role,
       status: "pending",
+      senderId,
     });
 
-    // Here you would typically send an email to the invited user
-    // For now, we'll just log it
-    console.log(`Invitation sent to ${email} for organization ${organizationId} with role ${role}`);
+    console.log(`Invitation created for ${email} for organization ${organizationId} with role ${role} by sender ${senderId}`);
 
     return invitationId;
-  },
-});
-
-export const inviteUserToOrganization = mutation({
-  args: {
-    organizationId: v.id("organizations"),
-    email: v.string(),
-    role: v.string(),
-  },
-  handler: async (ctx, args) => {
-    const { organizationId, email, role } = args;
-
-    // Check if invitation already exists
-    const existingInvitation = await ctx.db
-      .query("invitations")
-      .withIndex("by_email_and_org", (q) => 
-        q.eq("email", email).eq("organizationId", organizationId)
-      )
-      .first();
-
-    if (existingInvitation) {
-      throw new Error("Invitation already sent to this email for this organization");
-    }
-
-    // Create new invitation
-    await ctx.db.insert("invitations", {
-      organizationId,
-      email,
-      role,
-      status: "pending",
-    });
-
-    // Here you would typically send an email to the invited user
-    // For now, we'll just log it
-    console.log(`Invitation sent to ${email} for organization ${organizationId} with role ${role}`);
   },
 });
 
