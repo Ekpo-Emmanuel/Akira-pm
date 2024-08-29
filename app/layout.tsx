@@ -2,12 +2,12 @@ import type { Metadata } from "next";
 import { Bricolage_Grotesque } from "next/font/google";
 import { KindeClientProvider } from '@/app/providers/KindeClientProvider'
 import { ConvexClientProvider } from '@/app/providers/ConvexClientProvider'
-import { Toaster, toast } from 'sonner'
+import { ThemeProvider } from '@/app/providers/ThemeProvider'
+import { Toaster } from 'sonner'
 import "./globals.css";
 
 
 const bricolage = Bricolage_Grotesque({ subsets: ["latin"], weight: ["300", "400", "500", "600", "700", "800"] });
-
 
 export const metadata: Metadata = {
   title: "Akira PM",
@@ -20,14 +20,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={bricolage.className}>
+        <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
         <KindeClientProvider>
           <ConvexClientProvider>
             <Toaster richColors />
             {children}
           </ConvexClientProvider>
         </KindeClientProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
