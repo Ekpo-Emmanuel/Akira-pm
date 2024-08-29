@@ -19,5 +19,19 @@ export default defineSchema({
     email: v.string(),
     role: v.string(),
     status: v.string(),
+    senderId: v.string(),
   }).index("by_email_and_org", ["email", "organizationId"]),
+
+  workspaces: defineTable({
+    name: v.string(),
+    organizationId: v.id("organizations"),
+    createdBy: v.string(),
+    color: v.string(), 
+  }).index("by_organization", ["organizationId"]),
+
+  workspaceMembers: defineTable({
+    workspaceId: v.id("workspaces"),
+    userId: v.string(),
+    role: v.string(),
+  }).index("by_workspace_and_user", ["workspaceId", "userId"]),
 });
