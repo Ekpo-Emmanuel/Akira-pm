@@ -17,6 +17,17 @@ export const createOrganization = mutation({
   },
 });
 
+export const getOrganizationDetails = query({
+  args: { organizationId: v.id("organizations") },
+  handler: async (ctx, args) => {
+    const organization = await ctx.db.get(args.organizationId);
+    if (!organization) {
+      throw new Error("Organization not found");
+    }
+    return organization;
+  },
+});
+
 export const joinOrganization = mutation({
   args: { orgId: v.id("organizations"), userId: v.string() },
   handler: async (ctx, args) => {
@@ -36,9 +47,20 @@ export const inviteUserToOrganization = mutation({
     organizationId: v.id("organizations"),
     email: v.string(),
     role: v.string(),
+    senderId: v.string(), 
   },
   handler: async (ctx, args) => {
-    const { organizationId, email, role } = args;
+    const { organizationId, email, role, senderId } = args;
+
+    // Check if the sender is part of the organization
+    const sender = await ctx.db
+      .query("users")
+      .withIndex("by_kinde_id", (q) => q.eq("kindeId", senderId))
+      .first();
+
+    if (!sender || sender.organizationId !== organizationId) {
+      throw new Error("Not authorized to invite to this organization");
+    }
 
     // Check if invitation already exists
     const existingInvitation = await ctx.db
@@ -53,16 +75,17 @@ export const inviteUserToOrganization = mutation({
     }
 
     // Create new invitation
-    await ctx.db.insert("invitations", {
+    const invitationId = await ctx.db.insert("invitations", {
       organizationId,
       email,
       role,
       status: "pending",
+      senderId,
     });
 
-    // Here you would typically send an email to the invited user
-    // For now, we'll just log it
-    console.log(`Invitation sent to ${email} for organization ${organizationId} with role ${role}`);
+    console.log(`Invitation created for ${email} for organization ${organizationId} with role ${role} by sender ${senderId}`);
+
+    return invitationId;
   },
 });
 
