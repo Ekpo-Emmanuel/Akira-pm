@@ -23,7 +23,6 @@ export default async function RootLayout({
     const {getUser}: any = getKindeServerSession();
     const kindeUser = await getUser();
     
-    
     let initialUser = null;
     if (kindeUser) {
       const userOrg = await convex.query(api.users.getUserOrganization, { kindeId: kindeUser.id });
@@ -40,17 +39,17 @@ export default async function RootLayout({
     <html lang="en">
       <UserProvider initialUser={initialUser}>
         <body className="bg-[#FBFBFC] dark:bg-[#1E2024] dark:text-[#CCCCCC]">
+          {kindeUser && <StoreUser user={kindeUser} />}
           <div className="h-screen flex flex-col">
             <TopNav />
             <div className="flex flex-1 overflow-hidden pt-12">
               <SideNav />
               <main className={clsx(
-                "flex-1 overflow-y-auto mr-2 mb-2 rounded-md p-2",
+                "flex-1 overflow-y-auto mr-2 mb-2 rounded-md",
                 "border bg-white",
-                "dark:bg-workspaceDark dark:border-borderDark",
+                "dark:bg-[#2A2E35] dark:border-[#656f7d6d]",
               )}>
                   <div>
-                    {kindeUser && <StoreUser user={kindeUser} />}
                     {children}
                   </div>
               </main>
