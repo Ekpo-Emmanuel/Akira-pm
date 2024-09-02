@@ -7,12 +7,15 @@ export default defineSchema({
     email: v.string(),
     name: v.optional(v.string()),
     organizationId: v.optional(v.id("organizations")),
-  }).index("by_kinde_id", ["kindeId"]),
+  })
+  .index("by_kinde_id", ["kindeId"])
+  .index("by_email", ["email"]),
 
   organizations: defineTable({
     name: v.string(),
     ownerId: v.string(),
-  }),
+  })
+  .index("by_ownerId", ["ownerId"]),
 
   invitations: defineTable({
     organizationId: v.id("organizations"),
@@ -20,8 +23,9 @@ export default defineSchema({
     role: v.string(),
     status: v.string(),
     senderId: v.string(),
-  }).index("by_email_and_org", ["email", "organizationId"]),
-
+  }).index("by_email_and_org", ["email", "organizationId"])
+  .index("by_email", ["email"]),
+  
   workspaces: defineTable({
     name: v.string(),
     organizationId: v.id("organizations"),
