@@ -12,8 +12,25 @@ export const createOrganization = mutation({
     
     if (user) {
       await ctx.db.patch(user._id, { organizationId: orgId });
+      
+      // Create default workspace
+      const workspaceId = await ctx.db.insert("workspaces", {
+        name: "Default Workspace",
+        organizationId: orgId,
+        createdBy: user._id,
+        color: "#000000",
+      });
+
+      // Add the creator as an admin member
+      await ctx.db.insert("workspaceMembers", {
+        workspaceId,
+        userId: user._id,
+        role: "admin",
+      });
+
+
+      return { orgId, workspaceId };
     }
-    return orgId;
   },
 });
 
@@ -94,6 +111,26 @@ export const getOrganizationInvitations = query({
   handler: async (ctx, args) => {
     return await ctx.db
       .query("invitations")
+      .filter((q) => q.eq(q.field("organizationId"), args.organizationId))
+      .collect();
+  },
+});
+
+export const getUserOrganizations = query({
+  args: { kindeId: v.string() },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("organizations")
+      .withIndex("by_ownerId", (q) => q.eq("ownerId", args.kindeId)) // Use the correct index and field
+      .collect();
+  },
+});
+
+export const getOrganizationUsers = query({
+  args: { organizationId: v.id("organizations") },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("users")
       .filter((q) => q.eq(q.field("organizationId"), args.organizationId))
       .collect();
   },
