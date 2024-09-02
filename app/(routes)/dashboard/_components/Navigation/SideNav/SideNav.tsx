@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import { Home, Settings, FileText, PanelsTopLeft, ChevronDown, Plus, Landmark } from 'lucide-react';
-import { HiOutlineBuildingOffice2 } from "react-icons/hi2";
+import Link from "next/link";
 import { DropdownMenuCheckboxItemProps } from "@radix-ui/react-dropdown-menu"
 import {
   DropdownMenu,
@@ -152,8 +152,9 @@ export default function SideNav() {
             "flex flex-col px-2 pb-4 text-sm border-b dark:border-[#656f7d6d]",
             isCollapsed && 'px-[4px]'
         )}>
-            {sideBarItems.map((item) => (
-                <a
+            {sideBarItems.map((item, index) => (
+                <Link
+                    key={index}
                     href={item.link}
                     className={clsx(
                         "flex items-center space-x-2 p-2 font-light rounded-md hover:bg-[#eaeaf097] transition-colors ",
@@ -170,7 +171,7 @@ export default function SideNav() {
                     />
                     {/* <span>{item.name}</span> */}
                     {!isCollapsed && <span>{item.name}</span>}
-                </a>
+                </Link>
             ))}
 
         </nav>
