@@ -6,7 +6,7 @@ export const createWorkspace = mutation({
     name: v.string(),
     organizationId: v.id("organizations"),
     color: v.string(),
-    createdBy: v.string(), // Add this to receive the user ID from the client
+    createdBy: v.string(), 
   },
   handler: async (ctx, args) => {
     const { name, organizationId, color, createdBy } = args;
@@ -18,7 +18,7 @@ export const createWorkspace = mutation({
       color,
     });
 
-    // Optionally, add the creator as a workspace member
+   
     await ctx.db.insert("workspaceMembers", {
       workspaceId: workspace,
       userId: createdBy,
@@ -29,7 +29,6 @@ export const createWorkspace = mutation({
   },
 });
 
-// Keep the getWorkspaces query as is
 export const getWorkspaces = query({
   args: { organizationId: v.id("organizations") },
   handler: async (ctx, args) => {
