@@ -28,7 +28,7 @@ export const getUserOrganization = query({
   handler: async (ctx, args) => {
     const user = await ctx.db
       .query("users")
-      .withIndex("by_kinde_id", (q) => q.eq("kindeId", args.kindeId))
+      .filter((q) => q.eq(q.field("kindeId"), args.kindeId))
       .first();
     
     if (!user || !user.organizationId) return null;
