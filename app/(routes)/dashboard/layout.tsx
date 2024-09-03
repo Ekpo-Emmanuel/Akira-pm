@@ -3,6 +3,7 @@ import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import StoreUser from "./_components/StoreUser";
 import { UserProvider } from "@/app/contexts/UserProvider";
 import { OrganizationProvider } from "@/app/contexts/OrganizationContext";
+import { WorkspaceProvider } from '@/app/contexts/WorkspaceContext';
 import { api } from "@/convex/_generated/api";
 import { ConvexHttpClient } from "convex/browser";
 import SideNav from "./_components/Navigation/SideNav/SideNav";
@@ -87,33 +88,33 @@ export default async function RootLayout({
   }
 
   return (
-    <html lang="en">
       <UserProvider initialUser={initialUser}>
         <OrganizationProvider
           initialOrganization={initialOrganization}
           initialUserOrganizations={userOrganizations}
           initialUsers={organizationUsers}
         >
-          <body className="bg-[#FBFBFC] dark:bg-[#1E2024] dark:text-[#CCCCCC]">
-            {kindeUser && <StoreUser user={kindeUser} />}
-            <div className="h-screen flex flex-col">
-              <TopNav />
-              <div className="flex flex-1 overflow-hidden pt-12">
-                <SideNav />
-                <main className={clsx(
-                  "flex-1 overflow-y-auto mr-2 mb-2 rounded-md",
-                  "border bg-white",
-                  "dark:bg-[#2A2E35] dark:border-[#656f7d6d]",
-                )}>
-                  <div>
-                    {children}
-                  </div>
-                </main>
+          <WorkspaceProvider>
+            <main className="bg-[#FBFBFC] dark:bg-[#1E2024] dark:text-[#CCCCCC]">
+              {kindeUser && <StoreUser user={kindeUser} />}
+              <div className="h-screen flex flex-col">
+                <TopNav />
+                <div className="flex flex-1 overflow-hidden pt-12">
+                  <SideNav />
+                  <section className={clsx(
+                    "flex-1 overflow-y-auto mr-2 mb-2 rounded-md",
+                    "border bg-white",
+                    "dark:bg-[#2A2E35] dark:border-[#656f7d6d]",
+                  )}>
+                    <div>
+                      {children}
+                    </div>
+                  </section>
+                </div>
               </div>
-            </div>
-          </body>
+            </main>
+          </WorkspaceProvider>
         </OrganizationProvider>
       </UserProvider>
-    </html>
   );
 }
