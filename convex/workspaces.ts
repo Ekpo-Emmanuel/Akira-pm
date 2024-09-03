@@ -17,7 +17,6 @@ export const createWorkspace = mutation({
       createdBy,
       color,
     });
-
    
     await ctx.db.insert("workspaceMembers", {
       workspaceId: workspace,
@@ -26,6 +25,43 @@ export const createWorkspace = mutation({
     });
 
     return workspace;
+  },
+});
+
+export const getUserWorkspaces = query({
+  args: { 
+    userId: v.string(),
+    organizationId: v.id("organizations")
+  },
+  handler: async (ctx, args) => {
+    const workspaceMemberships = await ctx.db
+      .query("workspaceMembers")
+      .filter((q) => q.eq(q.field("userId"), args.userId))
+      .collect();
+
+    if (workspaceMemberships.length === 0) {
+      return [];
+    }
+
+    const workspaceIds = workspaceMemberships.map((membership) => membership.workspaceId);
+
+    const workspaces = await ctx.db
+      .query("workspaces")
+      .filter((q) => 
+        q.and(
+          q.eq(q.field("organizationId"), args.organizationId),
+          q.or(...workspaceIds.map(id => q.eq(q.field("_id"), id)))
+        )
+      )
+      .collect();
+
+    return workspaces.map((workspace) => ({
+      id: workspace._id,
+      name: workspace.name,
+      organizationId: workspace.organizationId,
+      createdBy: workspace.createdBy,
+      color: workspace.color,
+    }));
   },
 });
 
