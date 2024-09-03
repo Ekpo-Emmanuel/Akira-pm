@@ -15,3 +15,16 @@ export type Organization = {
   name: string;
   creatorId: string;
 };
+
+export type Workspace = {
+  id: string;
+  name: string;
+  organizationId: string;
+};
+
+export type WorkspaceMember = {
+  id: string;
+  userId: string;
+  workspaceId: string;
+  role: string;
+};
