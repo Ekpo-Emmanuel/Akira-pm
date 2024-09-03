@@ -10,11 +10,18 @@ import { Plus } from 'lucide-react';
 import Header from './_components/Header';
 import JointWorkspaces from './_components/JointWorkspaces/JointWorkspaces';
 import MyWorkspaces from './_components/MyWorkspaces/MyWorkspaces';
+import { useWorkspace } from '@/app/contexts/WorkspaceContext';
 
 
 
 export default function page() {
   const { user } = useUser();
+  const { 
+    currentWorkspace,
+    userWorkspaces,
+    currentWorkspaceMembers,
+    setCurrentWorkspace,
+   } = useWorkspace();
   const [selectedWorkspace, setSelectedWorkspace] = useState<Id<"workspaces"> | null>(null);
   const organizationId = user?.organizationId as Id<"organizations"> | undefined;
   const workspaces = useQuery(api.workspaces.getWorkspaces, 
@@ -49,7 +56,10 @@ export default function page() {
         <div className="h-screen">
             <div className="h-full grid grid-cols-1 md:grid-cols-[1.4fr_0.7fr] lg:grid-cols-[1.4fr_0.7fr] divide-y-[1px] md:divide-y-0 md:divide-x-[1px] divide-[#656f7d6d]">
                 <div className="p-4 lg:py-10 lg:px-8 lg:pl-12">  
-                    <JointWorkspaces handleCreateWorkspace={handleCreateWorkspace} />
+                    <JointWorkspaces 
+                      handleCreateWorkspace={handleCreateWorkspace}
+                      workspaces={userWorkspaces}
+                    />
                 </div>
                 <div className="p-4 lg:py-10 lg:px-8">  
                     <MyWorkspaces 
