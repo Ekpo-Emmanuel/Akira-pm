@@ -27,7 +27,7 @@ export default function WorkspaceName({ onInputChange }: WorkspaceNameProps) {
       <input
         type="text"
         id="voice-search"
-        className={`bg-gray-50 border ${!isActive && inputValue === "" ? "border-red-500" : "border-gray-300"} dark:border-[#656f7d6d] text-gray-900 rounded-md block w-full px-2.5 h-10 pr-8 bg-inherit dark:placeholder-gray-400 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-none placeholder:text-xs`}
+        className={`bg-gray-50 border ${!isActive && inputValue === "" ? "border-red-500 dark:border-red-500" : "border-gray-300"} dark:border-[#656f7d6d] text-gray-900 rounded-md block w-full px-2.5 h-10 pr-8 bg-inherit dark:placeholder-gray-400 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-none placeholder:text-xs`}
         placeholder="eg. Marketing, Finance, Sales, etc."
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
