@@ -1,6 +1,10 @@
 'use client';
+<<<<<<< HEAD
 
 import React, { useState, useEffect } from 'react';
+=======
+import React, { useState } from 'react';
+>>>>>>> 4de37992bf1f0391ba75f6d1b0488ac058542bb0
 import { Plus, X, Pencil } from 'lucide-react';
 import {
   Dialog,
@@ -31,6 +35,7 @@ import { Workspace } from '@/app/types';
 import Link from 'next/link';
 
 interface WorkspaceSearchProps {
+<<<<<<< HEAD
   handleCreateWorkspace: (
     workspaceName: string,
     workspaceColor: string,
@@ -49,6 +54,23 @@ export default function JointWorkspaces(props: WorkspaceSearchProps) {
   const { currentOrganization, userOrganizations }: any = useOrganization();
 
   const [workspaceColor, setWorkspaceColor] = useState<string | null>(null);
+=======
+  handleCreateWorkspace: () => void;
+  workspaces: any[];
+}
+
+export default function JointWorkspaces(props: WorkspaceSearchProps) {
+  const { 
+    currentOrganization, 
+    setCurrentOrganization, 
+    userOrganizations, 
+    setUserOrganizations,
+    currentUsers,
+    setCurrentUsers
+  }: any = useOrganization();
+
+  const [selectedColor, setSelectedColor] = useState<string | null>(null);
+>>>>>>> 4de37992bf1f0391ba75f6d1b0488ac058542bb0
   const [workspaceName, setWorkspaceName] = useState("");
   const [editingWorkspaceIndex, setEditingWorkspaceIndex] = useState<number | null>(null);
   const [workspaceDescription, setWorkspaceDescription] = useState<string[]>(userWorkspaces.map(() => "Add a description"));
@@ -74,9 +96,18 @@ export default function JointWorkspaces(props: WorkspaceSearchProps) {
     setWorkspaceDescription(newDescriptions);
   };
 
+<<<<<<< HEAD
   const truncateDescription = (description: string | undefined) => {
     if (!description) return ''; 
     return description.length > 40 ? description.slice(0, 40) + "..." : description;
+=======
+  const [editingWorkspaceIndex, setEditingWorkspaceIndex] = useState<number | null>(null);
+  const [workspaceDescriptions, setWorkspaceDescriptions] = useState<string[]>(props.workspaces.map(() => "Add a description"));
+
+  const handleColorChange = (color: string) => {
+    setSelectedColor(color);
+    console.log('Selected color:', color);
+>>>>>>> 4de37992bf1f0391ba75f6d1b0488ac058542bb0
   };
 
   const handleSearch = (searchTerm: string) => {
@@ -87,6 +118,7 @@ export default function JointWorkspaces(props: WorkspaceSearchProps) {
     setFilteredWorkspaces(filtered.length > 0 ? filtered : []);
   };
 
+<<<<<<< HEAD
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentOrganization) {
@@ -132,6 +164,25 @@ export default function JointWorkspaces(props: WorkspaceSearchProps) {
     }
   }
 
+=======
+  const handleEditDescription = (index: number) => {
+    setEditingWorkspaceIndex(index);
+  };
+
+  const handleDescriptionChange = (index: number, value: string) => {
+    const newDescriptions = [...workspaceDescriptions];
+    newDescriptions[index] = value;
+    setWorkspaceDescriptions(newDescriptions);
+  };
+
+  const handleDescriptionBlur = () => {
+    setEditingWorkspaceIndex(null);
+  };
+
+  const truncateDescription = (description: string) => {
+    return description.length > 40 ? description.slice(0, 40) + "..." : description;
+  };
+>>>>>>> 4de37992bf1f0391ba75f6d1b0488ac058542bb0
   return (
     <div className='flex flex-col gap-4'>
       <div className="flex justify-between relative">
@@ -146,6 +197,7 @@ export default function JointWorkspaces(props: WorkspaceSearchProps) {
             </DialogTrigger>
             <form>
               <DialogContent className="dark:bg-[#30353C] border-none rounded-lg">
+<<<<<<< HEAD
                 <DialogHeader>
                   <DialogTitle>Create a Workspace</DialogTitle>
                   <DialogDescription>
@@ -158,8 +210,36 @@ export default function JointWorkspaces(props: WorkspaceSearchProps) {
                     <div className="flex items-center gap-2">
                       <IconColor onColorChange={handleColorChange} />
                       <WorkspaceName onInputChange={handleInputChange} />
+=======
+                <div>
+                  <div>
+                    <h1 className="text-xl font-medium">Create a Workspace</h1>
+                    <p className="text-xs leading-5 dark:text-gray-500">
+                      A Space represents teams, departments, or groups, each with its own Lists, workflows, and settings.
+                    </p>
+                  </div>
+                  <div className="mt-6">
+                    <div className="flex flex-col gap-2">
+                      <label className="dark:text-gray-400 text-sm">Icon & Name</label>
+                      <div className=" flex items-center gap-2" >
+                        <IconColor onColorChange={handleColorChange} />
+                        <WorkspaceName onInputChange={handleInputChange} />
+                      </div>
+>>>>>>> 4de37992bf1f0391ba75f6d1b0488ac058542bb0
+                    </div>
+                    <div className="flex flex-col gap-2 mt-3">
+                      <label className="dark:text-gray-400 text-sm">Description (optional)</label>
+                      <input
+                        type="text"
+                        id="voice-search"
+                        className="border border-gray-300 dark:border-[#656f7d6d] text-gray-900 rounded-md block w-full px-2.5 h-10 pr-8 bg-inherit  dark:placeholder-gray-400 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-none placeholder:text-xs"
+                      />
+                    </div>
+                    <div className="mt-3">
+                      <PrivacyToggle />
                     </div>
                   </div>
+<<<<<<< HEAD
                   <div className="flex flex-col gap-2 mt-3">
                     <label className="dark:text-gray-400 text-sm">Description (optional)</label>
                     <input
@@ -178,6 +258,8 @@ export default function JointWorkspaces(props: WorkspaceSearchProps) {
                       onMembersChange={handleMembersChange}
                     />
                   </div>
+=======
+>>>>>>> 4de37992bf1f0391ba75f6d1b0488ac058542bb0
                 </div>
                 <DialogFooter>
                   <button onClick={handleSubmit} className="bg-blue-500 hover:bg-blue-400 text-sm text-white py-1.5 px-3 text-center rounded-md flex items-center justify-center gap-1">
@@ -191,6 +273,7 @@ export default function JointWorkspaces(props: WorkspaceSearchProps) {
         </div>
       </div>
       <div className="flex flex-col md:flex-row md:justify-between gap-1">
+<<<<<<< HEAD
         <WorkspaceSearch onSearch={handleSearch} />
         <WorkspaceFilter />
       </div>
@@ -271,3 +354,55 @@ export default function JointWorkspaces(props: WorkspaceSearchProps) {
     </div>
   );
 }
+=======
+        <WorkspaceSearch />
+        <WorkspaceFilter />
+      </div>
+      <div className='grid grid-cols-1 lg:grid-cols-2 gap-3'>
+        {props.workspaces.map((workspace, index) => (
+          <div key={index} className="border dark:border-borderDark rounded-lg p-3 grid gap-5">
+            <div className="flex items-center justify-between">
+              <div
+                className="h-[36px] w-[36px] text-md text-white rounded-lg flex items-center justify-center"
+                style={{
+                  backgroundColor: workspace?.color,
+                }}
+              >
+                {workspace?.name[0].toUpperCase()}
+              </div>
+              <div className="flex items-center justify-center rounded-md hover:bg-borderDark h-[36px] w-[36px] cursor-pointer">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-ellipsis"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+              </div>
+            </div>
+            <div>
+              <p className="text-md font-medium">{workspace?.name}</p>
+              <div className="flex items-center mt-3">
+                {editingWorkspaceIndex === index ? (
+                  <input
+                    type="text"
+                    className="bg-inherit border border-gray-300 dark:border-borderDark text-gray-900 text-sm rounded-md block w-full px-2.5 h-8 dark:placeholder-gray-400 dark:text-white focus:outline-none focus:ring-1 focus:ring-borderDark focus:border-none placeholder:text-xs"
+                    value={workspaceDescriptions[index]}
+                    onChange={(e) => handleDescriptionChange(index, e.target.value)}
+                    onBlur={handleDescriptionBlur}
+                    autoFocus
+                  />
+                ) : (
+                  <>
+                    <p className="text-xs text-gray-500">{truncateDescription(workspaceDescriptions[index])}</p>
+                    <button
+                      className="flex items-center justify-center rounded-md hover:bg-borderDark h-[26px] w-[26px] cursor-pointer"
+                      onClick={() => handleEditDescription(index)}
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+>>>>>>> 4de37992bf1f0391ba75f6d1b0488ac058542bb0
