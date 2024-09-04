@@ -3,7 +3,7 @@
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import PendingInvitations from "./_components/PendingInvitations";
-import { useUser } from "@/app/contexts/UserProvider";
+import { useUser } from '@/app/contexts/user/UserProviderClient';
 import Welcome from "./_components/dashboard/Welcome";
 import Workspaces from "./_components/dashboard/Workspaces";
 
