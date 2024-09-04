@@ -16,11 +16,21 @@ export type Organization = {
   creatorId: string;
 };
 
+export type OrganizationUser = {
+  kindeId: string; 
+  name: string; 
+  email: string;
+}
+
 export type Workspace = {
-  id: string;
+  _id: Id<"workspaces">;
+  _creationTime: number;
   name: string;
-  organizationId: string;
-};
+  organizationId: Id<"organizations">;
+  color: string;
+  createdBy: string;
+  description?: string;
+}
 
 export type WorkspaceMember = {
   id: string;
