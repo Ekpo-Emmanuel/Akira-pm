@@ -4,17 +4,17 @@ import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuTrigger,
-  } from "@/components/ui/dropdown-menu"
-
-
+} from "@/components/ui/dropdown-menu"
 
 interface IconColorProps {
     onColorChange: (color: string) => void;
 }
+
 export default function IconColor({ onColorChange }: IconColorProps) {
     const [selectedColor, setSelectedColor] = useState<string | null>(null);
     const [selectedIcon, setSelectedIcon] = useState<string | null>(null);
 
+    const defaultColor = '#6366F1'; // Default color if no other color is selected
     const colors = ['#1E3A8A', '#6366F1', '#EC4899', '#F43F5E', '#F59E0B', '#10B981', '#0D9488', '#047857', '#374151', '#1F2937', '#3B82F6', '#8B5CF6', '#EC6B0D', '#DC2626'];
     const icons = ['🚀', '📈', '💼', '🏡', '🎨', '🎯', '📦', '🛠️', '🎓', '📚'];
 
@@ -30,7 +30,7 @@ export default function IconColor({ onColorChange }: IconColorProps) {
                     <div
                         className="h-[33px] w-[33px] text-md text-white rounded-lg flex items-center justify-center cursor-pointer"
                         style={{
-                            backgroundColor: selectedColor || '#6366F1'
+                            backgroundColor: selectedColor || defaultColor,
                         }}
                     >
                         T
@@ -55,7 +55,6 @@ export default function IconColor({ onColorChange }: IconColorProps) {
                     </div>
                 </DropdownMenuContent>
             </DropdownMenu>
-
         </>
     );
 }
