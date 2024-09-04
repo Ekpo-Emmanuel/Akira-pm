@@ -4,9 +4,9 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
-import { useUser } from '@/app/contexts/UserProvider';
+import { useUser } from '@/app/contexts/user/UserProviderClient';
 import { Id } from '@/convex/_generated/dataModel';
-import { UserProvider } from "@/app/contexts/UserProvider"
+import { UserProvider } from "@/app/contexts/user/UserProvider"
 
 
 export default function AcceptInvite({ params }: { params: { invitationId: Id<"invitations"> } }) {
