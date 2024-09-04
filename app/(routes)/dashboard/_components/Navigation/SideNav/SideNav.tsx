@@ -12,8 +12,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { useUser } from "@/app/contexts/UserProvider";
 import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
+import { useUser } from '@/app/contexts/user/UserProviderClient';
 
 type Checked = DropdownMenuCheckboxItemProps["checked"]
 
