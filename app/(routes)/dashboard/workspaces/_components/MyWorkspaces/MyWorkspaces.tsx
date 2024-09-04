@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
-import { useUser } from '@/app/contexts/UserProvider';
+import { useUser } from "@/app/contexts/user/UserProviderClient";
 import { Id } from '@/convex/_generated/dataModel';
 import { Plus } from 'lucide-react';
 
