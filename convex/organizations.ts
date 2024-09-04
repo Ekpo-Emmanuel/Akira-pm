@@ -4,7 +4,11 @@ import { v } from "convex/values";
 export const createOrganization = mutation({
   args: { name: v.string(), userId: v.string() },
   handler: async (ctx, args) => {
-    const orgId = await ctx.db.insert("organizations", { name: args.name, ownerId: args.userId });
+    const orgId = await ctx.db.insert("organizations", { 
+      name: args.name, 
+      ownerId: args.userId 
+    });
+
     const user = await ctx.db
       .query("users")
       .withIndex("by_kinde_id", (q) => q.eq("kindeId", args.userId))
@@ -13,23 +17,33 @@ export const createOrganization = mutation({
     if (user) {
       await ctx.db.patch(user._id, { organizationId: orgId });
       
+      await ctx.db.insert("organizationMembers", {
+        organizationId: orgId,
+        userId: user._id,
+        role: "admin",
+      });
+
       // Create default workspace
       const workspaceId = await ctx.db.insert("workspaces", {
         name: "Default Workspace",
         organizationId: orgId,
         createdBy: user._id,
         color: "#000000",
+        visibility: "public", 
+        members: [user._id], 
+        description: "" 
       });
 
-      // Add the creator as an admin member
+      // Add the creator as an admin member of the workspace
       await ctx.db.insert("workspaceMembers", {
         workspaceId,
         userId: user._id,
         role: "admin",
       });
 
-
       return { orgId, workspaceId };
+    } else {
+      throw new Error("User not found");
     }
   },
 });
@@ -46,16 +60,38 @@ export const getOrganizationDetails = query({
 });
 
 export const joinOrganization = mutation({
-  args: { orgId: v.id("organizations"), userId: v.string() },
+  args: { 
+    organizationId: v.id("organizations"), 
+    userId: v.string() 
+  },
   handler: async (ctx, args) => {
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_kinde_id", (q) => q.eq("kindeId", args.userId))
+    const { organizationId, userId } = args;
+
+    const existingMembership = await ctx.db.query("organizationMembers")
+      .filter(q => q.eq(q.field("organizationId"), organizationId))
+      .filter(q => q.eq(q.field("userId"), userId))
       .first();
-    
-    if (user) {
-      await ctx.db.patch(user._id, { organizationId: args.orgId });
+
+    if (existingMembership) {
+      throw new Error("User is already a member of this organization.");
     }
+
+    await ctx.db.insert("organizationMembers", {
+      organizationId: organizationId,
+      userId: userId,
+      role: "member",
+    });
+
+    const organization = await ctx.db.get(args.organizationId);
+    if (!organization) {
+      throw new Error("Organization not found");
+    }
+
+    return {
+      id: organization._id,
+      name: organization.name,
+      creatorId: organization.ownerId,
+    };
   },
 });
 
@@ -119,9 +155,29 @@ export const getOrganizationInvitations = query({
 export const getUserOrganizations = query({
   args: { kindeId: v.string() },
   handler: async (ctx, args) => {
+// Get organizations where the user is a member
+    const organizationMemberships = await ctx.db
+      .query("organizationMembers")
+      .withIndex("by_user", (q) => q.eq("userId", args.kindeId))
+      .collect();
+
+    const memberOrganizationIds = organizationMemberships.map(membership => membership.organizationId);
+
+    // Get organizations created by the user
+    const createdOrganizations = await ctx.db
+      .query("organizations")
+      .withIndex("by_ownerId", (q) => q.eq("ownerId", args.kindeId))
+      .collect();
+
+    const createdOrganizationIds = createdOrganizations.map(org => org._id);
+
+    // Combine both sets of organization IDs
+    const allOrganizationIds = Array.from(new Set([...memberOrganizationIds, ...createdOrganizationIds]));
+
+    // Fetch all relevant organizations
     return await ctx.db
       .query("organizations")
-      .withIndex("by_ownerId", (q) => q.eq("ownerId", args.kindeId)) // Use the correct index and field
+      .filter(q => q.or(...allOrganizationIds.map(id => q.eq(q.field("_id"), id))))
       .collect();
   },
 });
@@ -129,9 +185,36 @@ export const getUserOrganizations = query({
 export const getOrganizationUsers = query({
   args: { organizationId: v.id("organizations") },
   handler: async (ctx, args) => {
+    // First, get all member IDs for the organization
+    const memberships = await ctx.db
+      .query("organizationMembers")
+      .withIndex("by_organization", (q) => q.eq("organizationId", args.organizationId))
+      .collect();
+
+    const memberIds = memberships.map(member => member.userId);
+
+    // Then, fetch all users with these IDs
     return await ctx.db
+      .query("users")
+      .filter((q) => q.or(...memberIds.map(id => q.eq(q.field("kindeId"), id))))
+      .collect();
+  },
+});
+
+export const getOrganizationMembers = query({
+  args: { organizationId: v.id("organizations") },
+  handler: async (ctx, args) => {
+    const members = await ctx.db
       .query("users")
       .filter((q) => q.eq(q.field("organizationId"), args.organizationId))
       .collect();
+
+    return members.map(member => ({
+      id: member._id,
+      kindeId: member.kindeId,
+      name: member.name,
+      email: member.email,
+      // Add any other fields you need
+    }));
   },
 });
