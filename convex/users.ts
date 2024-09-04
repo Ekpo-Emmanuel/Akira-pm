@@ -31,10 +31,29 @@ export const getUserOrganization = query({
       .filter((q) => q.eq(q.field("kindeId"), args.kindeId))
       .first();
     
-    if (!user || !user.organizationId) return null;
+      if (!user) return null;
 
-    const organization = await ctx.db.get(user.organizationId);
-    return organization ? organization._id : null;
+      const organizationMembership = await ctx.db
+        .query("organizationMembers")
+        .filter((q) => q.eq(q.field("userId"), user.kindeId))
+        .first();
+  
+      if (!organizationMembership) return null;
+  
+      return {
+        organizationId: organizationMembership.organizationId,
+        role: organizationMembership.role
+      };
+  },
+});
+
+export const getOrganizationUsers = query({
+  args: { organizationId: v.id("organizations") },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("users")
+      .filter((q) => q.eq(q.field("organizationId"), args.organizationId))
+      .collect();
   },
 });
 
