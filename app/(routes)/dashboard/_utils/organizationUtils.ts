@@ -17,13 +17,14 @@ export function useCreateOrganization() {
 }
 
 export function useJoinOrganization() {
-  const joinOrg = useMutation(api.organizations.joinOrganization);
-
-  return async (orgId: Id<"organizations">, userId: string) => {
+  const joinOrganizationMutation = useMutation(api.organizations.joinOrganization);
+  
+  return async (organizationId: Id<"organizations">, userId: string) => {
     try {
-      await joinOrg({ orgId, userId });
+      const joinedOrg = await joinOrganizationMutation({ organizationId, userId });
+      return joinedOrg;
     } catch (error) {
-      console.error("Failed to join organization:", error);
+      console.error('Error joining organization:', error);
       throw error;
     }
   };
@@ -31,4 +32,10 @@ export function useJoinOrganization() {
 
 export function useGetUserOrganization(userId: string) {
   return useQuery(api.users.getUserOrganization, { kindeId: userId });
+}
+
+export function useGetOrganizationMembers(organizationId: Id<"organizations"> | undefined) {
+  return useQuery(api.organizations.getOrganizationMembers, 
+      organizationId ? { organizationId } : "skip"
+  );
 }
