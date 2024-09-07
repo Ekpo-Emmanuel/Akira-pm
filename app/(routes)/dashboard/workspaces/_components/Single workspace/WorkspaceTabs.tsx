@@ -1,35 +1,43 @@
 'use client';
-import { useRouter, usePathname } from 'next/navigation';
-import Link from 'next/link';
 
-const tabs = [
-  { name: 'Boards', path: 'boards' },
-  { name: 'Lists', path: 'lists' },
-  { name: 'Members', path: 'members' },
-  { name: 'Settings', path: 'settings' },
-];
+import { useState } from 'react';
+import { Id } from '@/convex/_generated/dataModel';
+import Boards from '../Boards/Boards';
 
-export default function WorkspaceTabs({ workspaceId }: { workspaceId: string }) {
-  const pathname = usePathname();
-  const currentTab = pathname.split('/').pop() || 'boards';
+
+interface WorkspaceTabsProps{
+  workspaceId: Id<"workspaces">;
+}
+
+export default function WorkspaceTabs(props: WorkspaceTabsProps){
+  const [activeTab, setActiveTab] = useState('Recent boards');
+
+  const tabs = ['Recent boards', 'Members', 'Permissions'];
 
   return (
-    <div className="px-4 md:px-10 mt-10">
-        <div className="grid grid-cols-4 md:flex mb-4">
+    <div className="w-full mt-5 p-4 md:p-6">
+      <div className="flex space-x-8">
         {tabs.map((tab) => (
-            <Link
-                key={tab.path}
-                href={`/dashboard/workspaces/${workspaceId}/${tab.path}`}
-                className={`py-1.5 md:h-10 md:px-4 flex items-center justify-center md:text-sm rounded-t-md text-center text-xs border-b ${
-                    currentTab === tab.path
-                    ? 'text-blue-400  border-blue-500 border-b-3'
-                    : 'hover:bg-borderDark dark:border-borderDark text-white'
-                }`}
-            >
-                {tab.name}
-            </Link>
+          <button
+            key={tab}
+            className={`pb-2 text-sm ${
+              activeTab === tab
+                ? 'text-blue-500 border-b-2 border-blue-500'
+                : ''
+            }`}
+            onClick={() => setActiveTab(tab)}
+          >
+            {tab}
+          </button>
         ))}
-        </div>
+      </div>
+      {/* <div className="mt-4 bg-gray-200 dark:bg-borderDark p-4 rounded-md"> */}
+      <div className="mt-4">
+        {activeTab === 'Recent boards' && <Boards workspaceId={props.workspaceId} />}
+        {activeTab === 'Members' && <div>Your Members content here</div>}
+        {activeTab === 'Permissions' && <div>Your Permissions content here</div>}
+      </div>
     </div>
   );
-}
+};
+
