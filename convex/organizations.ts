@@ -1,8 +1,12 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { Id } from "./_generated/dataModel";
 
 export const createOrganization = mutation({
-  args: { name: v.string(), userId: v.string() },
+  args: { 
+    name: v.string(), 
+    userId: v.string() 
+  },
   handler: async (ctx, args) => {
     const orgId = await ctx.db.insert("organizations", { 
       name: args.name, 
@@ -76,22 +80,29 @@ export const joinOrganization = mutation({
       throw new Error("User is already a member of this organization.");
     }
 
-    await ctx.db.insert("organizationMembers", {
-      organizationId: organizationId,
-      userId: userId,
-      role: "member",
-    });
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_kinde_id", (q) => q.eq("kindeId", args.userId))
+      .first();
 
-    const organization = await ctx.db.get(args.organizationId);
-    if (!organization) {
-      throw new Error("Organization not found");
+    if(user) {
+      await ctx.db.insert("organizationMembers", {
+        organizationId: organizationId,
+        userId: user._id,
+        role: "member",
+      });
+  
+      const organization = await ctx.db.get(args.organizationId);
+      if (!organization) {
+        throw new Error("Organization not found");
+      }
+  
+      return {
+        id: organization._id,
+        name: organization.name,
+        creatorId: organization.ownerId,
+      };
     }
-
-    return {
-      id: organization._id,
-      name: organization.name,
-      creatorId: organization.ownerId,
-    };
   },
 });
 
@@ -155,30 +166,37 @@ export const getOrganizationInvitations = query({
 export const getUserOrganizations = query({
   args: { kindeId: v.string() },
   handler: async (ctx, args) => {
-// Get organizations where the user is a member
-    const organizationMemberships = await ctx.db
-      .query("organizationMembers")
-      .withIndex("by_user", (q) => q.eq("userId", args.kindeId))
-      .collect();
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_kinde_id", (q) => q.eq("kindeId", args.kindeId))
+      .first();
 
-    const memberOrganizationIds = organizationMemberships.map(membership => membership.organizationId);
 
-    // Get organizations created by the user
-    const createdOrganizations = await ctx.db
-      .query("organizations")
-      .withIndex("by_ownerId", (q) => q.eq("ownerId", args.kindeId))
-      .collect();
-
-    const createdOrganizationIds = createdOrganizations.map(org => org._id);
-
-    // Combine both sets of organization IDs
-    const allOrganizationIds = Array.from(new Set([...memberOrganizationIds, ...createdOrganizationIds]));
-
-    // Fetch all relevant organizations
-    return await ctx.db
-      .query("organizations")
-      .filter(q => q.or(...allOrganizationIds.map(id => q.eq(q.field("_id"), id))))
-      .collect();
+      if(user) {
+        const organizationMemberships = await ctx.db
+          .query("organizationMembers")
+          .withIndex("by_user", (q) => q.eq("userId", user._id))
+          .collect();
+    
+        const memberOrganizationIds = organizationMemberships.map(membership => membership.organizationId);
+    
+        // Get organizations created by the user
+        const createdOrganizations = await ctx.db
+          .query("organizations")
+          .withIndex("by_ownerId", (q) => q.eq("ownerId", user._id))
+          .collect();
+    
+        const createdOrganizationIds = createdOrganizations.map(org => org._id);
+    
+        // Combine both sets of organization IDs
+        const allOrganizationIds = Array.from(new Set([...memberOrganizationIds, ...createdOrganizationIds]));
+    
+        // Fetch all relevant organizations
+        return await ctx.db
+          .query("organizations")
+          .filter(q => q.or(...allOrganizationIds.map(id => q.eq(q.field("_id"), id))))
+          .collect();
+      }
   },
 });
 
@@ -205,16 +223,34 @@ export const getOrganizationMembers = query({
   args: { organizationId: v.id("organizations") },
   handler: async (ctx, args) => {
     const members = await ctx.db
-      .query("users")
-      .filter((q) => q.eq(q.field("organizationId"), args.organizationId))
+      .query("organizationMembers")
+      .withIndex("by_organization", (q) => q.eq("organizationId", args.organizationId))
       .collect();
 
-    return members.map(member => ({
-      id: member._id,
-      kindeId: member.kindeId,
-      name: member.name,
-      email: member.email,
-      // Add any other fields you need
+    const membersWithDetails = await Promise.all(members.map(async (member) => {
+      const user = await ctx.db
+        .query("users")
+        .filter(q => q.eq(q.field("_id"), member.userId))
+        .first();
+
+      return {
+        ...member,
+        name: user?.name || "Unknown",
+        email: user?.email
+      };
     }));
+
+    return membersWithDetails;
+  },
+});
+
+export const getOrganization = query({
+  args: { orgId: v.id("organizations") },
+  handler: async (ctx, args) => {
+    const organization = await ctx.db.get(args.orgId);
+    if (!organization) {
+      throw new Error("Organization not found");
+    }
+    return organization;
   },
 });
