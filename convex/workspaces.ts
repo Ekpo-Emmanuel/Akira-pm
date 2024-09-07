@@ -68,7 +68,6 @@ export const getUserWorkspaces = query({
   },
 });
 
-//Get single Workspace
 export const getWorkspace = query({
   args: { id: v.id('workspaces') },
   handler: async (ctx, args) => {
@@ -89,7 +88,6 @@ export const getWorkspace = query({
   },
 });
 
-//get all workspaces
 export const getWorkspaces = query({
   args: { organizationId: v.id("organizations") },
   handler: async (ctx, args) => {

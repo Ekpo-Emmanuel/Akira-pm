@@ -14,6 +14,7 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
+import type * as boards from "../boards.js";
 import type * as invitations from "../invitations.js";
 import type * as organizations from "../organizations.js";
 import type * as users from "../users.js";
@@ -28,6 +29,7 @@ import type * as workspaces from "../workspaces.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  boards: typeof boards;
   invitations: typeof invitations;
   organizations: typeof organizations;
   users: typeof users;
