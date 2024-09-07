@@ -9,10 +9,11 @@ import Header from './_components/Header';
 import JointWorkspaces from './_components/JointWorkspaces/JointWorkspaces';
 import { useWorkspace } from '@/app/contexts/workspace/WorkspaceContext';
 import { toast } from 'sonner';
-import { useCreateOrganization, useJoinOrganization, useGetUserOrganization } from '@/app/(routes)/dashboard/_utils/organizationUtils';
+import { useCreateOrganization, useJoinOrganization } from '@/app/(routes)/dashboard/_utils/organizationUtils';
 import { useOrganization } from '@/app/contexts/organization/OrganizationContext';
 import DashboardAnimation from '@/app/_components/DashboardAnimation';
 import { SWorkspace } from '@/app/_components/Skeleton/SWorkspace';
+import { Workspace } from '@/app/types';
 
 export default function Page() {
   const { user } = useUser();
@@ -42,26 +43,26 @@ export default function Page() {
       try {
         const convertedMembers = members?.map(toUserId); 
 
-        // const newWorkspace = await createWorkspace({ 
-        //   name: workspaceName, 
-        //   organizationId, 
-        //   color: workspaceColor,
-        //   createdBy: createdBy,
-        //   description: workspaceDescription,
-        //   visibility: visibility,
-        //   members: visibility === 'private' ? convertedMembers : undefined
-        // }) as Workspace;
+        const newWorkspace = await createWorkspace({ 
+          name: workspaceName, 
+          organizationId, 
+          color: workspaceColor,
+          createdBy: createdBy,
+          description: workspaceDescription,
+          visibility: visibility,
+          members: visibility === 'private' ? convertedMembers : undefined
+        }) as Workspace;
 
-        // setUserWorkspaces([...userWorkspaces, newWorkspace]);
-        console.log('workspace details' + 
-          'workspaceName: ' + workspaceName, 
-          'color:' + workspaceColor, 
-          'organizationId: ' + organizationId, 
-          'createdBy: ' + createdBy, 
-          'visibility: ' + visibility, 
-          'description: ' + workspaceDescription, 
-          'members: ' + convertedMembers
-        );
+        setUserWorkspaces([...userWorkspaces, newWorkspace]);
+        // console.log('workspace details' + 
+        //   'workspaceName: ' + workspaceName, 
+        //   'color:' + workspaceColor, 
+        //   'organizationId: ' + organizationId, 
+        //   'createdBy: ' + createdBy, 
+        //   'visibility: ' + visibility, 
+        //   'description: ' + workspaceDescription, 
+        //   'members: ' + convertedMembers
+        // );
         toast.success('Workspace created successfully');
       } catch (error) {
         console.error('Error creating workspace:', error);
