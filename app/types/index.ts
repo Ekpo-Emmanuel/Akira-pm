@@ -1,7 +1,7 @@
 import { Id } from "@/convex/_generated/dataModel";
 
 export type User = {
-  id: string;
+  id: Id<"users">;
   kindeId: string;
   email: string;
   name: string;
@@ -10,10 +10,12 @@ export type User = {
   organizationId?: Id<"organizations">;
 };
 
+//Organization
 export type Organization = {
-  id: Id<"organizations">;
+  _id: Id<"organizations">;
+  _creationTime: number;
   name: string;
-  creatorId: string;
+  ownerId: string;
 };
 
 export type OrganizationUser = {
@@ -22,6 +24,14 @@ export type OrganizationUser = {
   email: string;
 }
 
+export type OrganizationMember = {
+  id: string;
+  organizationId: Id<"organizations">;
+  userId: string;
+  role: string;
+};
+
+// Workspace
 export type Workspace = {
   _id: Id<"workspaces">;
   _creationTime: number;
@@ -38,3 +48,45 @@ export type WorkspaceMember = {
   workspaceId: string;
   role: string;
 };
+
+//Board
+export type Board = {
+  _id: Id<"boards">;
+  name: string;
+  workspaceId: Id<"workspaces">;
+  description?: string;
+  createdBy: Id<"users">;
+  // _creationTime: number;
+}
+
+export type Table = {
+  _id: Id<"tables">;
+  boardId: Id<"boards">;
+  name: string;
+  columns: Column[];
+  groups: Group[];
+  createdBy: Id<"users">;
+  createdAt: number;
+}
+
+export type Column = {
+  id: string;
+  name: string;
+  type: 'text' | 'number' | 'date' | 'select' | 'multiselect';
+  options?: string[];
+}
+
+export type Group = {
+  id: string;
+  name: string;
+}
+
+export type Row = {
+  _id: Id<"rows">;
+  tableId: Id<"tables">;
+  groupId: string;
+  data: { [columnId: string]: any };
+  createdBy: Id<"users">;
+  createdAt: number;
+  updatedAt: number;
+}
