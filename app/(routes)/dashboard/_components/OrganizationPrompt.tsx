@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useCreateOrganization, useJoinOrganization } from '@/app/(routes)/dashboard/_utils/organizationUtils';
+import { useState, useEffect } from 'react';
+import { useCreateOrganization, useJoinOrganization, useGetOrganization } from '@/app/(routes)/dashboard/_utils/organizationUtils';
 import { Id } from "@/convex/_generated/dataModel";
 import { toast } from 'sonner';
 import { useOrganization } from '@/app/contexts/organization/OrganizationContext';
@@ -17,8 +17,19 @@ export default function OrganizationPrompt({ userId, onCreateOrganization }: Org
   const [orgName, setOrgName] = useState('');
   const [orgId, setOrgId] = useState('');
   const [isJoining, setIsJoining] = useState(false);
+  const [newOrgId, setNewOrgId] = useState<Id<"organizations"> | null>(null);
   const createOrganization = useCreateOrganization();
   const joinOrganization = useJoinOrganization();
+  const newOrg = useGetOrganization(newOrgId);
+
+  useEffect(() => {
+    if (newOrg) {
+      setUserOrganizations([...userOrganizations, newOrg]);
+      onCreateOrganization(newOrg);
+      toast.success('Organization created successfully');
+      setNewOrgId(null);
+    }
+  }, [newOrg, userOrganizations, onCreateOrganization]);
 
   if (isOrgLoading) {
     return <div>Loading Organization...</div>;
@@ -33,37 +44,40 @@ export default function OrganizationPrompt({ userId, onCreateOrganization }: Org
       try {
         const result = await createOrganization(orgName, userId);
         if ('orgId' in result && 'workspaceId' in result) {
-          const newOrg: Organization = {
-            id: result.orgId,
-            name: orgName,
-            creatorId: userId
-          };
-          setUserOrganizations([...userOrganizations, newOrg]);
-          onCreateOrganization(newOrg);
-          toast.success('Organization created successfully');
+          setNewOrgId(result.orgId);
         }
       } catch (error) {
         console.error("Failed to create organization:", error);
       }
     }
   };
-
+  
   const handleJoinOrganization = async () => {
     if (orgId) {
       try {
         const organizationId = orgId as Id<"organizations">;
         const joinedOrg = await joinOrganization(organizationId, userId);
-        
-        if ('id' in joinedOrg && 'name' in joinedOrg && 'creatorId' in joinedOrg) {
-          setUserOrganizations([...userOrganizations, joinedOrg as Organization]);
-          onCreateOrganization(joinedOrg as Organization);
+  
+        if (joinedOrg && 'id' in joinedOrg && 'name' in joinedOrg && 'creatorId' in joinedOrg) {
+          const transformedOrg: Organization = {
+            _id: joinedOrg.id,
+            name: joinedOrg.name,
+            ownerId: joinedOrg.creatorId,
+            _creationTime: Date.now()
+          };
+          setUserOrganizations([...userOrganizations, transformedOrg]);
+          onCreateOrganization(transformedOrg);
+          toast.success('Successfully joined the organization');
+        } else {
+          toast.error("Organization not found or invalid organization data");
         }
-        toast.success('Successfully joined the organization');
       } catch (error) {
         console.error("Failed to join organization:", error);
+        toast.error("Failed to join organization");
       }
     }
   };
+  
 
   return (
     <section className="flex items-center justify-center w-full h-screen bg-gray-50 dark:bg-bgDark fixed z-50">
