@@ -12,7 +12,7 @@ export function WorkspaceProviderWrapper({ children }: { children: React.ReactNo
 
   const organization = currentOrganization ? {
     ...currentOrganization,
-    id: currentOrganization.id as Id<"organizations">
+    id: currentOrganization._id as Id<"organizations">
   } : null;
 
   return (
