@@ -30,12 +30,20 @@ export function useJoinOrganization() {
   };
 }
 
-export function useGetUserOrganization(userId: string) {
-  return useQuery(api.users.getUserOrganization, { kindeId: userId });
+
+export function useGetOrganization(orgId: Id<"organizations"> | null) {
+  return useQuery(api.organizations.getOrganization, orgId ? { orgId } : "skip");
 }
 
+// export function useGetOrganizationMembers(organizationId: Id<"organizations"> | undefined) {
+//   return useQuery(api.organizations.getOrganizationMembers, 
+//       organizationId ? { organizationId } : "skip"
+//   );
+// }
+
 export function useGetOrganizationMembers(organizationId: Id<"organizations"> | undefined) {
-  return useQuery(api.organizations.getOrganizationMembers, 
+  const result = useQuery(api.organizations.getOrganizationMembers, 
       organizationId ? { organizationId } : "skip"
   );
+  return { members: result, isLoading: result === undefined, error: result instanceof Error ? result : null };
 }
