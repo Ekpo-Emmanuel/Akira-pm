@@ -6,6 +6,7 @@ import { useTheme } from "next-themes"
 import { Search, Bell, UserPlus } from 'lucide-react';
 import SearchBar from './SearchBar';
 import ProfileIcon from './ProfileIcon';
+import { NotificationContainer } from "./Notifications/NotificationContainer";
 
 
 const TopNav = () => {
@@ -22,7 +23,7 @@ const TopNav = () => {
 
       <div className="flex space-x-6 items-center">
         <button className="dark:text-gray-200 dark:hover:text-white">
-          <Bell className="w-4 h-8" />
+          <NotificationContainer />
         </button>
         <button className="dark:text-gray-200 dark:hover:text-white">
           <UserPlus className="w-4 h-8" />
