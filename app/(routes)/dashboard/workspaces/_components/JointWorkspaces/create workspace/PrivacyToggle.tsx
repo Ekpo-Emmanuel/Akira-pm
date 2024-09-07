@@ -1,4 +1,5 @@
 'use client';
+
 import React, { useState, useEffect } from 'react';
 import { CheckIcon, Plus, X } from 'lucide-react';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
@@ -25,11 +26,11 @@ export default function PrivacyToggle({
     const [open, setOpen] = useState(false);
     const [isPrivate, setIsPrivate] = useState(visibility === 'private');
     const [selectedUsers, setSelectedUsers] = useState<{ name: string; id: string }[]>([]);
-    const members = organizationId ? useGetOrganizationMembers(organizationId) : undefined;
+    const { members } = useGetOrganizationMembers(organizationId);
 
     useEffect(() => {
         setIsPrivate(visibility === 'private');
-      }, [visibility]);
+    }, [visibility]);
 
     const togglePrivacy = () => {
         const newVisibility = isPrivate ? 'public' : 'private';
@@ -39,19 +40,17 @@ export default function PrivacyToggle({
 
     const addUser = (user: { name: string; id: string }) => {
         if (!selectedUsers.some(u => u.id === user.id)) {
-            const newSelectedUsers = [...selectedUsers, user];
-            setSelectedUsers(newSelectedUsers);
-            onMembersChange(newSelectedUsers); 
+            const updatedUsers = [...selectedUsers, user];
+            setSelectedUsers(updatedUsers);
+            onMembersChange(updatedUsers);
         }
     };
 
-    const removeUser = (userToRemove: { id: string }) => {
-        const newSelectedUsers = selectedUsers.filter(user => user.id !== userToRemove.id);
-        setSelectedUsers(newSelectedUsers);
-        onMembersChange(newSelectedUsers); 
+    const removeUser = (userId: string) => {
+        const updatedUsers = selectedUsers.filter(user => user.id !== userId);
+        setSelectedUsers(updatedUsers);
+        onMembersChange(updatedUsers);
     };
-
-    const otherMembers = members?.filter(member => member.id !== currentUserId) || [];
 
     return (
         <div className="flex flex-col gap-4">
@@ -70,9 +69,10 @@ export default function PrivacyToggle({
                         className="sr-only peer" 
                     />
                     <div 
-                        className={`w-[2.3rem] h-5 bg-gray-500 rounded-full peer peer-checked:bg-blue-500
-                            after:content-[''] after:absolute after:top-1/2 after:-translate-y-[48%] after:left-[3px] after:bg-white after:border-gray-300 after:border 
-                            after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-full`}
+                        className={`w-[2.3rem] h-5 bg-gray-500 rounded-full peer peer-checked:bg-blue-500 after:content-[''] 
+                                    after:absolute after:top-1/2 after:-translate-y-[48%] after:left-[3px] after:bg-white 
+                                    after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 
+                                    after:transition-all peer-checked:after:translate-x-full`}
                     />
                 </label>
             </div>
@@ -80,24 +80,21 @@ export default function PrivacyToggle({
             {isPrivate && (
                 <div>
                     <div className="flex justify-between items-center">
-                        <div className="dark:text-[#ADB3BD] text-sm">Share only with:</div>
+                        <span className="dark:text-[#ADB3BD] text-sm">Share only with:</span>
                         <div className="flex items-center gap-2 mt-2">
-                            {selectedUsers.length > 0 && <span className="text-xs">+{selectedUsers.length}</span>} 
-                            {selectedUsers.map((user, index) => (
-                                <div 
-                                    key={index} 
-                                    className="relative w-7 h-7 text-[10px] flex items-center justify-center text-white bg-purple-600 rounded-full"
-                                >
+                            {selectedUsers.length > 0 && <span className="text-xs">+{selectedUsers.length}</span>}
+                            {selectedUsers.map(user => (
+                                <div key={user.id} className="relative w-7 h-7 text-[10px] flex items-center justify-center text-white bg-purple-600 rounded-full">
                                     {user.name.charAt(0).toUpperCase()}
                                     <button 
-                                        onClick={() => removeUser(user)}
+                                        onClick={() => removeUser(user.id)} 
                                         className="absolute -top-2 -right-2 p-1 text-red-500 bg-white rounded-full opacity-0 hover:opacity-100"
                                     >
                                         <X size={12} />
                                     </button>
                                 </div>
                             ))}
-                            
+
                             <Popover open={open} onOpenChange={setOpen}>
                                 <PopoverTrigger asChild>
                                     <button
@@ -107,26 +104,29 @@ export default function PrivacyToggle({
                                         <Plus size={14} />
                                     </button>
                                 </PopoverTrigger>
-                                <PopoverContent className="p-0 dark:bg-[#30353C]">
+                                <PopoverContent className="p-0 dark:bg-[#30353C] dark:text-gray-400">
                                     <Command>
                                         <CommandInput placeholder="Search or select a user..." className="h-9 placeholder:text-xs" />
                                         <CommandList>
                                             <CommandEmpty>No people matched your search</CommandEmpty>
                                             <CommandGroup>
-                                                {otherMembers.map((user) => (
+                                                {members && members.map(user => (
                                                     <CommandItem
-                                                        key={user.id}
+                                                        key={user._id}
                                                         value={user.name!}
                                                         onSelect={() => {
-                                                            addUser({ name: user.name! as string, id: user.id }); 
+                                                            addUser({ name: user.name!, id: user._id });
                                                             setOpen(false);
                                                         }}
                                                     >
-                                                        {user.name}
+                                                        {user.userId === currentUserId ? 'Me' : user.name}
+                                                        {user.role === 'admin' && (
+                                                            <span className="ml-2 text-xs text-gray-500">(Admin)</span>
+                                                        )}
                                                         <CheckIcon
                                                             className={cn(
                                                                 "ml-auto h-4 w-4",
-                                                                selectedUsers.some(u => u.id === user.id) ? "opacity-100" : "opacity-0"
+                                                                selectedUsers.some(u => u.id === user._id) ? "opacity-100" : "opacity-0"
                                                             )}
                                                         />
                                                     </CommandItem>
