@@ -8,7 +8,6 @@ import { useConvex } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import OrganizationPrompt from '@/app/(routes)/dashboard/_components/OrganizationPrompt';
 
-
 function OrganizationProviderWrapper({ children }: { children: React.ReactNode }) {
   const [initialOrganization, setInitialOrganization] = useState<Organization | null>(null);
   const [userOrganizations, setUserOrganizations] = useState<Organization[]>([]);
@@ -22,28 +21,32 @@ function OrganizationProviderWrapper({ children }: { children: React.ReactNode }
     const fetchData = async () => {
       if (user) {
         const fetchedOrganizations = await convex.query(api.organizations.getUserOrganizations, { kindeId: user.kindeId });
-        const mappedOrganizations: Organization[] = fetchedOrganizations.map(org => ({
-          id: org._id,
-          name: org.name,
-          creatorId: org.ownerId
-        }));
-      
-        setUserOrganizations(mappedOrganizations);
-      
-        if (mappedOrganizations.length > 0) {
-          setInitialOrganization(mappedOrganizations[0]);
-          const fetchedUsers = await convex.query(api.organizations.getOrganizationUsers, { organizationId: mappedOrganizations[0].id });
-          
-          const mappedUsers: OrganizationUser[] = fetchedUsers.map(user => ({
-            kindeId: user.kindeId, 
-            name: user.name || "Unknown", 
-            email: user.email
+        if(fetchedOrganizations) {
+          const mappedOrganizations: Organization[] = fetchedOrganizations.map(org => ({
+            _id: org._id,
+            _creationTime: org._creationTime,
+            name: org.name,
+            ownerId: org.ownerId
           }));
-      
-          setOrganizationUsers(mappedUsers);
-          setShowPrompt(false); // Hide prompt if user has organizations
+          setUserOrganizations(mappedOrganizations);
+        
+          if (mappedOrganizations.length > 0) {
+            setInitialOrganization(mappedOrganizations[0]);
+            const fetchedUsers = await convex.query(api.organizations.getOrganizationUsers, { organizationId: mappedOrganizations[0]._id });
+            
+            const mappedUsers: OrganizationUser[] = fetchedUsers.map(user => ({
+              kindeId: user._id, 
+              name: user.name || "Unknown", 
+              email: user.email
+            }));
+        
+            setOrganizationUsers(mappedUsers);
+            setShowPrompt(false); 
+          } else {
+            setShowPrompt(true); 
+          }
         } else {
-          setShowPrompt(true); // Show prompt only if user has no organizations
+          setShowPrompt(true);
         }
       }
     };
@@ -52,9 +55,8 @@ function OrganizationProviderWrapper({ children }: { children: React.ReactNode }
   }, [user, convex]);
 
   if (!user) {
-    return null; // Or a loading indicator
+    return null; 
   }
-
 
   return (
     <OrganizationProvider
@@ -65,7 +67,7 @@ function OrganizationProviderWrapper({ children }: { children: React.ReactNode }
       {showPrompt ? (
         <OrganizationPrompt 
           userId={user.kindeId}
-          onCreateOrganization={(org) => {
+          onCreateOrganization={(org: Organization) => {
             setInitialOrganization(org);
             setUserOrganizations([org]);
             setShowPrompt(false);
