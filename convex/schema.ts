@@ -49,4 +49,43 @@ export default defineSchema({
     userId: v.string(),
     role: v.string(),
   }).index("by_workspace_and_user", ["workspaceId", "userId"]),
+
+  boards: defineTable({
+    workspaceId: v.id("workspaces"),
+    name: v.string(),
+    description: v.optional(v.string()),
+    createdBy: v.id("users"),
+  }),
+
+  tables: defineTable({
+    boardId: v.id("boards"),
+    name: v.string(),
+    columns: v.array(
+      v.object({
+        id: v.string(),
+        name: v.string(),
+        type: v.union(v.literal("text"), v.literal("number"), v.literal("date"), v.literal("select"), v.literal("multiselect")),
+        options: v.optional(v.array(v.string())),
+      })
+    ),
+    groups: v.array(
+      v.object({
+        id: v.string(),
+        name: v.string(),
+      })
+    ),
+    createdBy: v.id("users"),
+  }),
+
+  rows: defineTable({
+    tableId: v.id("tables"),
+    groupId: v.string(),
+    // data: v.object({
+    //   // This allows any string key with any value
+    //   "": v.any()
+    // }),
+    createdBy: v.id("users"),
+    updatedAt: v.number(),
+  }),
+
 });
