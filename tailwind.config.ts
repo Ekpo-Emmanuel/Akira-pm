@@ -19,6 +19,7 @@ const config = {
     },
     extend: {
       colors: {
+        textDark: "#CCCCCC",
         bgLight: "#FBFBFC",
         bgDark: "#1E2024",
         workspaceDark: "#2A2E35",
