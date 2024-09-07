@@ -33,7 +33,7 @@ export function WorkspaceProvider({ children, user, currentOrganization }: Works
     const fetchWorkspaces = async () => {
       if (user && currentOrganization) {
         const workspaces = await convex.query(api.workspaces.getWorkspaces, { 
-          organizationId: currentOrganization.id as Id<"organizations">
+          organizationId: currentOrganization._id as Id<"organizations">
         });
 
         setUserWorkspaces(workspaces);
