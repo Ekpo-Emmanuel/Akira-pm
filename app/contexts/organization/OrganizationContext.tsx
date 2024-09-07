@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { Organization, OrganizationUser } from '@/app/types';
 
 type User = {
   kindeId: string;
@@ -8,11 +9,6 @@ type User = {
   email: string;
 };
 
-type Organization = {
-  id: string;
-  name: string;
-  creatorId: string;
-};
 
 type OrganizationContextType = {
   currentOrganization: Organization | null;
