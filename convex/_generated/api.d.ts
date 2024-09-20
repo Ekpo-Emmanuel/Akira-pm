@@ -17,6 +17,7 @@ import type {
 import type * as boards from "../boards.js";
 import type * as invitations from "../invitations.js";
 import type * as organizations from "../organizations.js";
+import type * as tables from "../tables.js";
 import type * as users from "../users.js";
 import type * as workspaces from "../workspaces.js";
 
@@ -32,6 +33,7 @@ declare const fullApi: ApiFromModules<{
   boards: typeof boards;
   invitations: typeof invitations;
   organizations: typeof organizations;
+  tables: typeof tables;
   users: typeof users;
   workspaces: typeof workspaces;
 }>;

@@ -16,7 +16,20 @@ export const createBoard = mutation({
         createdBy: args.userId,
       });
       
-      // Fetch the newly created board to return it
+      await ctx.db.insert("tables", {
+        boardId,
+        name: "Main Table",
+        description: "This is your first table in this board",
+        columns: [
+          { id: "1", name: "Task", type: "text" },
+          { id: "2", name: "Status", type: "select" },
+          { id: "3", name: "Due Date", type: "date" }
+        ],
+        rows: [],
+        createdBy: args.userId,
+        updatedAt: Date.now(),
+      });
+
       const newBoard = await ctx.db.get(boardId);
       return newBoard;
     },
@@ -31,3 +44,10 @@ export const getBoards = query({
       .collect();
   },
 });
+
+export const getSingleBoard = query({
+  args: { boardId: v.id("boards") },
+  handler: async (ctx, args) => {
+    return await ctx.db.get(args.boardId);
+  },
+})
