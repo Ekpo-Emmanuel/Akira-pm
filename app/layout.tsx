@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Bricolage_Grotesque } from "next/font/google";
+import { Bricolage_Grotesque, Inter } from "next/font/google";
 import { KindeClientProvider } from '@/app/providers/KindeClientProvider'
 import { ConvexClientProvider } from '@/app/providers/ConvexClientProvider'
 import { ThemeProvider } from '@/app/providers/ThemeProvider'
@@ -8,6 +8,7 @@ import "./globals.css";
 
 
 const bricolage = Bricolage_Grotesque({ subsets: ["latin"], weight: ["300", "400", "500", "600", "700", "800"] });
+const inter = Inter({ subsets: ["latin"], weight: ["300", "400", "500", "600", "700", "800"] });
 
 export const metadata: Metadata = {
   title: "Akira PM",
@@ -21,7 +22,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={bricolage.className}>
+      <body className={inter.className}>
         <ThemeProvider
             attribute="class"
             defaultTheme="system"
