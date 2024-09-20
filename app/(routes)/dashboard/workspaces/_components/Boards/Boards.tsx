@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from "next/link";
 import { PanelRight, Star, Plus } from 'lucide-react';
 import BoardSearch from './BoardSearch';
 import { useMutation, useQuery } from 'convex/react';
@@ -171,15 +172,17 @@ export default function Boards({ workspaceId }: BoardsProps) {
         {filteredBoards.length > 0 && (
           <ScrollArea className="mt-4 grid h-[300px]">
             {filteredBoards.map((board) => (
-              <div key={board._id} className="w-full flex items-center justify-between border-b dark:border-borderDark px-2 py-3 hover:bg-gray-50 dark:hover:bg-borderDark hover:rounded-md cursor-pointer">
-                <div className="flex items-center space-x-2">
-                  <PanelRight strokeWidth={1.5} size={20} />
-                  <span className="text-sm">{board.name}</span>
+              <Link href={`/dashboard/boards/${board._id}`} key={board._id}>
+                <div className="w-full flex items-center justify-between border-b dark:border-borderDark px-2 py-3 hover:bg-gray-50 dark:hover:bg-borderDark hover:rounded-md cursor-pointer">
+                  <div className="flex items-center space-x-2">
+                    <PanelRight strokeWidth={1.5} size={20} />
+                    <span className="text-sm">{board.name}</span>
+                  </div>
+                  <div className="hover:bg-gray-100 dark:hover:bg-borderDark rounded p-1">
+                    <Star strokeWidth={1} size={20} />
+                  </div>
                 </div>
-                <div className="hover:bg-gray-100 dark:hover:bg-borderDark rounded p-1">
-                  <Star strokeWidth={1} size={20} />
-                </div>
-              </div>
+              </Link>
             ))}
           </ScrollArea>
         )}
