@@ -1,4 +1,5 @@
 import { Id } from "@/convex/_generated/dataModel";
+import { ColumnDef } from '@tanstack/react-table';
 
 export type User = {
   id: Id<"users">;
@@ -81,12 +82,54 @@ export type Group = {
   name: string;
 }
 
+// export type Row = {
+//   _id: Id<"rows">;
+//   tableId: Id<"tables">;
+//   groupId: string;
+//   data: { [columnId: string]: any };
+//   createdBy: Id<"users">;
+//   createdAt: number;
+//   updatedAt: number;
+// }
+
+
 export type Row = {
-  _id: Id<"rows">;
-  tableId: Id<"tables">;
-  groupId: string;
-  data: { [columnId: string]: any };
-  createdBy: Id<"users">;
-  createdAt: number;
-  updatedAt: number;
+  id: string;
+  cells: Record<string, string | number | null>; // Define cells as a Record
 }
+
+export type SubItem = {
+  id: string;
+  subItem: string;
+  owner: string;
+  status: string;
+  date: string;
+};
+
+// Update the Task type to include subItems
+export type Task = {
+  id: string;
+  [key: string]: any;
+  subItems?: SubItem[];
+};
+
+// Define the TaskGroup type
+export type TaskGroup = {
+  id: string;
+  groupName: string;
+  collapsed: boolean;
+  items: Task[];
+};
+
+// Define the StatusOption type
+export type StatusOption = {
+  label: string;
+  color: string;
+};
+
+// Extend ColumnDef to include showDistribution
+export type CustomColumnDef<TData, TValue> = ColumnDef<TData, TValue> & {
+  showDistribution?: boolean;
+  accessorKey?: string;
+};
+
