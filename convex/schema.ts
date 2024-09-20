@@ -60,32 +60,35 @@ export default defineSchema({
   tables: defineTable({
     boardId: v.id("boards"),
     name: v.string(),
+    description: v.optional(v.string()),
     columns: v.array(
       v.object({
         id: v.string(),
         name: v.string(),
-        type: v.union(v.literal("text"), v.literal("number"), v.literal("date"), v.literal("select"), v.literal("multiselect")),
-        options: v.optional(v.array(v.string())),
+        type: v.string(), 
+        config: v.optional(v.any()), 
       })
     ),
-    groups: v.array(
+    rows: v.array(
       v.object({
         id: v.string(),
-        name: v.string(),
+        cells: v.object({}),  
       })
     ),
     createdBy: v.id("users"),
-  }),
-
-  rows: defineTable({
-    tableId: v.id("tables"),
-    groupId: v.string(),
-    // data: v.object({
-    //   // This allows any string key with any value
-    //   "": v.any()
-    // }),
-    createdBy: v.id("users"),
     updatedAt: v.number(),
-  }),
+  }).index("by_boardId", ["boardId"]),
+   
+
+  // rows: defineTable({
+  //   tableId: v.id("tables"),
+  //   groupId: v.string(),
+  //   // data: v.object({
+  //   //   // This allows any string key with any value
+  //   //   "": v.any()
+  //   // }),
+  //   createdBy: v.id("users"),
+  //   updatedAt: v.number(),
+  // }),
 
 });
