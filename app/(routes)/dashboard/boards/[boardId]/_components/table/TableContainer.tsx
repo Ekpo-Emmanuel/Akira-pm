@@ -6,6 +6,7 @@ import { Row } from '@/app/types';
 import clsx from 'clsx';
 import EditableCell from './EditableCell';
 import StatusCell from './cells/StatusCell';
+import { DateCell } from './cells/DateCell';
 
 const columns: ColumnDef<Row>[] = [
     {
@@ -24,7 +25,8 @@ const columns: ColumnDef<Row>[] = [
     {
         accessorKey: 'dueDate',
         header: 'Due Date',
-        cell: (props: any) => <p>{props.getValue()}</p>,
+        minSize: 100,
+        cell: DateCell,
     },
     {
         accessorKey: 'assignee',
