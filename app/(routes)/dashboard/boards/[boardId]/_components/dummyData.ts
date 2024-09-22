@@ -25,7 +25,7 @@ export const dummyData: Group[] = [
     ],
     rows: [
       { id: '1', task: 'Implement login', status: statusOptions[0], dueDate: '2024-05-30', assignee: 'John' },
-      { id: '2', task: 'Design database schema', status: statusOptions[4], dueDate: '2024-05-15', assignee: 'Jane' },
+      { id: '2', task: 'Design database schema', status: statusOptions[4], dueDate: '', assignee: 'Jane' },
       { id: '3', task: 'Set up CI/CD pipeline', status: statusOptions[2], dueDate: '2024-06-10', assignee: 'Alice' },
       { id: '4', task: 'Develop user profile page', status: statusOptions[0], dueDate: '2024-06-20', assignee: 'Bob' },
       { id: '5', task: 'Optimize API performance', status: statusOptions[2], dueDate: '2024-07-05', assignee: 'Charlie' },
