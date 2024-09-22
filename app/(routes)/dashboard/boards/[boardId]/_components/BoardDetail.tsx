@@ -4,9 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
-import TableView from './TableView';
-import EditableTable from './EditableTable';
-import TableViewContainer from './table/TableViewContainer';
+import TableContainer from './table/TableContainer';
 
 interface BoardDetailProps {
   boardId: Id<"boards">;
@@ -21,9 +19,7 @@ export default function BoardDetail({ boardId }: BoardDetailProps) {
 
   return (
     <div>
-      {/* {defaultTable && <TableView tableId={defaultTable._id}  />} */}
-      {/* <EditableTable /> */}
-      <TableViewContainer />
+      <TableContainer />
     </div>
   );
 }
