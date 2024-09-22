@@ -26,27 +26,28 @@ export default function StatusCell(props: StatusCellProps) {
 
     // Ensure the status name and color are updated
     const handleStatusChange = (newStatus: any) => {
-        updateData(props.row.index, props.column.id, newStatus); // Update the whole status object
+        updateData(props.row.index, props.column.id, newStatus); // Update the whole status object or clear it if null
     }
 
-    // Default to "Not Started" if no valid status is found
-    const displayName = name || 'Not Started'; // Fallback name if empty
-    const displayColor = color || '#797E93';  // Default color for "Not Started"
+    const displayName = name || 'Not Started'; 
+    const displayColor = name === "none" ? '#ffffff' : color || '#797E93';  // Pink color if "none", otherwise use the status color
 
     return (
         <Select onValueChange={(value) => {
-            const selectedStatus = statusOptions.find(status => status.name === value);
-            if (selectedStatus) {
-                handleStatusChange(selectedStatus);
+            if (value === 'none') {
+                handleStatusChange(null);  // Clear the status, which will set background to pink
+            } else {
+                const selectedStatus = statusOptions.find(status => status.name === value);
+                if (selectedStatus) {
+                    handleStatusChange(selectedStatus); // Update with selected status
+                }
             }
         }}>
             <SelectTrigger
-                className="w-full h-full text-black dark:text-white"
-                style={{
-                    backgroundColor: displayColor // Use the updated color or fallback color
-                }}
+              className="w-full h-full text-black dark:text-white"
+              style={{ backgroundColor: displayColor }}
             >
-                <SelectValue placeholder={displayName} />
+              <SelectValue placeholder={displayName} />
             </SelectTrigger>
             <SelectContent>
                 <SelectGroup>
@@ -55,13 +56,22 @@ export default function StatusCell(props: StatusCellProps) {
                             key={status.id}
                             value={status.name}
                             className="w-full h-full"
+                            style={{ backgroundColor: status.color }}
                         >
                             <div className="flex items-center gap-2">
-                                <ColorIcon color={status.color} />
                                 {status.name}
                             </div>
                         </SelectItem>
                     ))}
+                    {/* Add the "None" option to clear the status */}
+                    <SelectItem
+                      value="none"
+                      className="w-full h-full bg-red-400"
+                    >
+                      <div className="flex items-center gap-2">
+                        None
+                      </div>
+                    </SelectItem>
                 </SelectGroup>
             </SelectContent>
         </Select>
