@@ -70,47 +70,54 @@ export type Table = {
   createdAt: number;
 }
 
+export type ColumnType = 'text' | 'number' | 'date' | 'select';
+
 export type Column = {
   id: string;
   name: string;
-  type: 'text' | 'number' | 'date' | 'select' | 'multiselect';
-  options?: string[];
+  type: ColumnType;
+  options?: StatusOption[];
+}
+
+export type Row = {
+  id: string;
+  task: string;
+  status: StatusOption;
+  dueDate: string;
+  assignee: string;
+  [key: string]: any;
+}
+
+export type StatusOption = {
+  id: string;
+  name: string;
+  color: string;
 }
 
 export type Group = {
   id: string;
   name: string;
+  columns: Column[];
+  rows: Row[];
 }
 
-// export type Row = {
-//   _id: Id<"rows">;
-//   tableId: Id<"tables">;
-//   groupId: string;
-//   data: { [columnId: string]: any };
-//   createdBy: Id<"users">;
-//   createdAt: number;
-//   updatedAt: number;
-// }
-
-
-export type Row = {
-  id: string;
-  cells: Record<string, string | number | null>; // Define cells as a Record
+export type statusOptions = {
+  id: string; 
+  name: string; 
+  color: string;
 }
 
-export type SubItem = {
-  id: string;
-  subItem: string;
-  owner: string;
-  status: string;
-  date: string;
-};
+
 
 // Update the Task type to include subItems
 export type Task = {
   id: string;
+  task: string;
+  status: string;
+  due_date: string;
+  notes: string;
+  group?: string;
   [key: string]: any;
-  subItems?: SubItem[];
 };
 
 // Define the TaskGroup type
@@ -121,15 +128,12 @@ export type TaskGroup = {
   items: Task[];
 };
 
-// Define the StatusOption type
-export type StatusOption = {
-  label: string;
-  color: string;
-};
 
-// Extend ColumnDef to include showDistribution
-export type CustomColumnDef<TData, TValue> = ColumnDef<TData, TValue> & {
-  showDistribution?: boolean;
-  accessorKey?: string;
-};
 
+export type CustomColumnDef<T> = {
+  id?: string;
+  accessorKey: keyof T | string;
+  header: string | React.ReactNode;
+  cell?: (info: { getValue: () => any, row: { original: T } }) => React.ReactNode;
+  enableSorting?: boolean;
+}
