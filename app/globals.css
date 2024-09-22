@@ -76,3 +76,79 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+
+/* styles.css */
+
+/* Table Container */
+.table {
+  border: 1px solid #424242;
+}
+
+/* Table Row */
+.tr {
+  display: flex;
+  width: fit-content;
+}
+
+/* Table Header and Data Cells */
+.th,
+.td {
+  box-shadow: inset 0 0 0 1px #424242;
+}
+
+/* Table Header */
+.th {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #B0BEC5; /* Equivalent to gray.400 */
+  padding: 0.5rem;
+  font-weight: bold;
+  font-size: 0.75rem; /* Equivalent to 'xs' */
+  text-transform: uppercase;
+  text-align: center;
+}
+
+/* Table Data Cells > Input Fields */
+.td > input {
+  margin: 0.25rem; /* Equivalent to 'm: 1' */
+  padding: 0.2rem;
+  background: transparent; /* Equivalent to 'bg: transparent' */
+  max-width: 100%; /* Equivalent to 'maxW: 100%' */
+}
+
+/* Date Wrapper */
+.date-wrapper {
+  display: flex;
+  align-items: center;
+  width: 100%; /* Equivalent to 'w: 100%' */
+  height: 100%; /* Equivalent to 'h: 100%' */
+}
+
+/* Resizer Handle */
+.resizer {
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  right: 0;
+  height: 100%; /* Equivalent to 'h: 100%' */
+  width: 5px; /* Equivalent to 'w: 5px' */
+  background: #27bbff; /* Equivalent to 'bg: #27bbff' */
+  cursor: col-resize;
+  user-select: none;
+  touch-action: none;
+  border-radius: 6px;
+}
+
+/* Resizer when Resizing */
+.resizer.isResizing {
+  background: #2eff31; /* Equivalent to 'bg: #2eff31' */
+  opacity: 1;
+}
+
+/* Resizer on Hover */
+*:hover > .resizer {
+  opacity: 1;
+}
