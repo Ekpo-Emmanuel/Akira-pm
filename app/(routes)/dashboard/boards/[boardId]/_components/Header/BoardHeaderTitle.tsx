@@ -46,7 +46,7 @@ export default function BoardHeaderTitle(props: BoardHeaderTitleProps) {
               isOpen && 'bg-bgLight dark:bg-borderDark'
             )}
           >
-            <span className="text-xl">{board?.name}</span>
+            <span className="text-2xl font-bold">{board?.name}</span>
             <ChevronDown size={14} className={`transition-transform ${isOpen ? 'rotate-180' : 'rotate-0'}`} />
           </button>
 
