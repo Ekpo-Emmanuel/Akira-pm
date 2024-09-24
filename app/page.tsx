@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
+
 
 export default function Home() {
   return (
@@ -34,6 +36,9 @@ export default function Home() {
               </button>
             </Link>
           </div>
+          <LogoutLink>
+            Logout
+        </LogoutLink>
         </div>
       </div>
     </section>
