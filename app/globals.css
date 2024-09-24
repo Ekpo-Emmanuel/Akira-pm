@@ -109,6 +109,7 @@
   font-size: 0.75rem; /* Equivalent to 'xs' */
   text-transform: uppercase;
   text-align: center;
+  /* background: #ffffff00; */
 }
 
 /* Table Data Cells > Input Fields */
