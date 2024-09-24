@@ -1,4 +1,3 @@
-'use client';
 
 import { Id } from '@/convex/_generated/dataModel';
 import BoardHearder from './_components/Header/BoardHearder';
