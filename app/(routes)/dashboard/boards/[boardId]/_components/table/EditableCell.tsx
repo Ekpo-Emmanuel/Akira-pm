@@ -48,13 +48,13 @@ export default function EditableCell({ getValue, row, column, table }: CellConte
     <section className="w-full h-full">
       <div className="grid grid-cols-[1.7fr_0.3fr] h-full">
         {/* Input field for editing the cell's value */}
-        <div className="h-full p-1 flex items-center">
+        <div className="h-full p-[2px] flex items-center">
           <input
             type="text"
             value={value}
             onChange={handleChange} // Using optimized change handler
             onBlur={handleBlur} // Using optimized blur handler
-            className="bg-inherit hover:border hover:border-gray-300 dark:hover:border-borderDark text-gray-900 text-sm rounded-sm focus:ring-blue-500 focus:border-blue-500 block w-full px-2.5 dark:border-borderDark dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            className="bg-inherit  border border-white dark:border-workspaceDark hover:border hover:textDark  dark:hover:border-tableHoverBorderDark text-textDark dark:text-textLight text-xs sm:text-sm placeholder:text-xs placeholder:sm:text-sm rounded-sm focus:ring-blue-500 focus:border-blue-500 block w-full px-2 dark:border-borderDark dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="Add item"
           />
         </div>
