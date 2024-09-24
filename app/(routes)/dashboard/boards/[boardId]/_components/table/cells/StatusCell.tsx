@@ -30,21 +30,23 @@ export default function StatusCell(props: StatusCellProps) {
     }
 
     const displayName = name || 'Not Started'; 
-    const displayColor = name === "none" ? '#ffffff' : color || '#797E93';  // Pink color if "none", otherwise use the status color
+    const displayColor = name === "none" ? '#ffffff' : color || '#ffffff00';  // Pink color if "none", otherwise use the status color
 
     return (
-        <Select onValueChange={(value) => {
-            if (value === 'none') {
-                handleStatusChange(null);  // Clear the status, which will set background to pink
-            } else {
-                const selectedStatus = statusOptions.find(status => status.name === value);
-                if (selectedStatus) {
-                    handleStatusChange(selectedStatus); // Update with selected status
+        <Select 
+            onValueChange={(value) => {
+                if (value === 'none') {
+                    handleStatusChange(null);  // Clear the status, which will set background to pink
+                } else {
+                    const selectedStatus = statusOptions.find(status => status.name === value);
+                    if (selectedStatus) {
+                        handleStatusChange(selectedStatus); // Update with selected status
+                    }
                 }
-            }
-        }}>
+            }}
+        >
             <SelectTrigger
-              className="w-full h-full text-black dark:text-white"
+              className="w-full h-full text-white/90"
               style={{ backgroundColor: displayColor }}
             >
               <SelectValue placeholder={displayName} />
