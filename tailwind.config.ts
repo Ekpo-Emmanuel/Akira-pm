@@ -19,11 +19,13 @@ const config = {
     },
     extend: {
       colors: {
-        textDark: "#CCCCCC",
+        textDark: "#323338",
+        textLight: "#D5D8DF",
         bgLight: "#FBFBFC",
         bgDark: "#1E2024",
         workspaceDark: "#2A2E35",
         borderDark: "#656f7d6d",
+        tableHoverBorderDark: "#fbfbfc82",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
