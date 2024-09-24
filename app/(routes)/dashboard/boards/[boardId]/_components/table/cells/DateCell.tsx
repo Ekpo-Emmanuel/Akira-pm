@@ -56,16 +56,16 @@ export function DateCell({ getValue, row, column, table }: CellContext<any, unkn
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <div className="w-full bg-inherit flex items-center justify-center h-full">
+        <div className="w-full bg-inherit flex items-center justify-center h-full p-[2px]">
           <div
             className={`
-              w-[95%] relative hover:border dark:hover:border-borderDark rounded-md h-7 flex items-center justify-center gap-1
+              w-full h-full relative hover:border dark:hover:border-tableHoverBorderDark rounded-md flex items-center justify-center gap-1
               ${!date ? 'hover:opacity-100 opacity-0 transition-opacity duration-300' : 'opacity-100'}
               group
             `}
           >
             {/* Display formatted date or Plus icon if no date */}
-            <span className="text-sm">
+            <span className="text-xs sm:text-sm text-textDark dark:text-textLight">
               {date ? format(date, "MMM d") : <Plus size={14} />}
             </span>
             {!date && <CalendarIcon className="mr-2 h-4 w-4" />}
