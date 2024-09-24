@@ -1,14 +1,40 @@
 'use client'
 import React, { useState } from 'react';
 import { flexRender, getCoreRowModel, useReactTable, ColumnDef } from '@tanstack/react-table';
+import { Checkbox } from "@/components/ui/checkbox"
 import { dummyData } from '../dummyData';
 import { Row } from '@/app/types';
 import clsx from 'clsx';
 import EditableCell from './EditableCell';
 import StatusCell from './cells/StatusCell';
 import { DateCell } from './cells/DateCell';
+import { AssigneeCell } from './cells/Assignee Cell/AssigneeCell';
+
 
 const columns: ColumnDef<Row>[] = [
+    {
+        id: 'select-col',
+        header: ({ table }) => (
+            <div>
+                <Checkbox
+                    checked={table.getIsAllRowsSelected()}
+                    // indeterminate={table.getIsSomeRowsSelected()}
+                    onChange={table.getToggleAllRowsSelectedHandler()} //or getToggleAllPageRowsSelectedHandler
+                />
+            </div>
+        ),
+        cell: ({ row }) => (
+            <div className="h-full flex items-center justify-center">
+                <Checkbox
+                    checked={row.getIsSelected()}
+                    disabled={!row.getCanSelect()}
+                    onChange={row.getToggleSelectedHandler()}
+                />
+            </div>
+        ),
+        size: 40,
+        maxSize: 40,
+    },
     {
         accessorKey: 'task',
         header: 'Task',
@@ -19,7 +45,7 @@ const columns: ColumnDef<Row>[] = [
         accessorKey: 'status',
         header: 'Status',
         size: 200,
-        minSize: 100,
+        minSize: 150,
         cell: StatusCell,
     },
     {
@@ -29,9 +55,10 @@ const columns: ColumnDef<Row>[] = [
         cell: DateCell,
     },
     {
-        accessorKey: 'assignee',
-        header: 'Assignee',
-        cell: (props: any) => <p>{props.getValue()}</p>,
+        accessorKey: 'assignees',
+        header: 'Assignees',
+        // cell: (props: any) => <p>{props.getValue()}</p>,
+        cell: AssigneeCell,
     },
 ];
 
@@ -42,6 +69,8 @@ export default function TableContainer() {
         columns,
         getCoreRowModel: getCoreRowModel(),
         columnResizeMode: 'onChange',
+        // enableRowSelection: row => row.original.age > 18,
+        enableMultiRowSelection: true,
         meta: {
             updateData: (rowIndex: any, columnId: any, value: any) => {
                 setData((prev) =>
@@ -54,11 +83,15 @@ export default function TableContainer() {
     });
 
     return (
-        <section>
-            <div className="table" style={{ width: table.getTotalSize() }}>
+        <section className="">
+            <div 
+                className="w-full border-l-[4px] border-green-500 rounded-md" 
+                style={{ width: table.getTotalSize() }}
+            >
                 {/* Headers */}
                 {table.getHeaderGroups().map((headerGroup) => (
-                    <div className="tr" key={headerGroup.id}>
+                    <div className="flex w-fit" key={headerGroup.id}>                   
+                        {/* Existing dynamic headers */}
                         {headerGroup.headers.map((header) => (
                             <div className="th" style={{ width: header.getSize() }} key={header.id}>
                                 {typeof header.column.columnDef.header === 'function'
@@ -74,17 +107,37 @@ export default function TableContainer() {
                                 />
                             </div>
                         ))}
+
+                        {/* New static header column */}
+                        <div className="th" style={{ width: '200px' }} key="header-column">
+                            Add new Column 
+                            <div className="resizer" />
+                        </div>
                     </div>
                 ))}
 
                 {/* Rows */}
                 {table.getRowModel().rows.map((row) => (
-                    <div className="tr" key={row.id}>
+                    <div 
+                        className={clsx('tr', row.getIsSelected() ? 'selected' : null)} 
+                        key={row.id}
+                        onClick={row.getToggleSelectedHandler()}
+                    >
+                        {/* Existing dynamic cells */}
                         {row.getVisibleCells().map((cell) => (
-                            <div key={cell.id} className="td" style={{ width: cell.column.getSize() }}>
+                            <div 
+                                key={cell.id}
+                                // className="td" 
+                                className="h-8 border-r-[1px] border-b-[1px] border-gray-300 dark:border-borderDark"
+                                style={{ width: cell.column.getSize() }}
+                            >
                                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
                             </div>
                         ))}
+
+                        {/* New static role/column */}
+                        <div className="h-8 border-r-[1px] border-b-[1px] border-gray-300 dark:border-borderDark" style={{ width: '200px' }} key={`role-${row.id}`}>                            
+                        </div>
                     </div>
                 ))}
             </div>
