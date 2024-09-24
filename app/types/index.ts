@@ -70,7 +70,7 @@ export type Table = {
   createdAt: number;
 }
 
-export type ColumnType = 'text' | 'number' | 'date' | 'select';
+export type ColumnType = 'text' | 'number' | 'date' | 'select' | 'multiselect';
 
 export type Column = {
   id: string;
@@ -84,7 +84,7 @@ export type Row = {
   task: string;
   status: StatusOption;
   dueDate: string;
-  assignee: string;
+  assignees: string[];
   [key: string]: any;
 }
 
