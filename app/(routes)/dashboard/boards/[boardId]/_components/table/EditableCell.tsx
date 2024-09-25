@@ -54,7 +54,7 @@ export default function EditableCell({ getValue, row, column, table }: CellConte
             value={value}
             onChange={handleChange} // Using optimized change handler
             onBlur={handleBlur} // Using optimized blur handler
-            className="bg-inherit  border border-white dark:border-workspaceDark hover:border hover:textDark  dark:hover:border-tableHoverBorderDark text-textDark dark:text-textLight text-xs sm:text-sm placeholder:text-xs placeholder:sm:text-sm rounded-sm focus:ring-blue-500 focus:border-blue-500 block w-full px-2 dark:border-borderDark dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            className="bg-inherit  border border-white hover:border-borderDark dark:border-workspaceDark hover:border hover:textDark  dark:hover:border-tableHoverBorderDark text-textDark dark:text-textLight text-xs sm:text-sm placeholder:text-xs placeholder:sm:text-sm rounded-sm focus:ring-blue-500 focus:border-blue-500 block w-full px-2 dark:border-borderDark dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="Add item"
           />
         </div>
