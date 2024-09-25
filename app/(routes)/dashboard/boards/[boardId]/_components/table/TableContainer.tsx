@@ -1,6 +1,6 @@
 'use client'
 import React, { useState } from 'react';
-import { flexRender, getCoreRowModel, useReactTable, ColumnDef } from '@tanstack/react-table';
+import { flexRender, getCoreRowModel, useReactTable, ColumnDef, getSortedRowModel, SortingState } from '@tanstack/react-table';
 import { Checkbox } from "@/components/ui/checkbox"
 import { dummyData } from '../dummyData';
 import { Row } from '@/app/types';
@@ -9,17 +9,16 @@ import EditableCell from './EditableCell';
 import StatusCell from './cells/StatusCell';
 import { DateCell } from './cells/DateCell';
 import { AssigneeCell } from './cells/Assignee Cell/AssigneeCell';
-
+import Header from './cells/Header cell/Header';
 
 const columns: ColumnDef<Row>[] = [
     {
         id: 'select-col',
         header: ({ table }) => (
-            <div>
+            <div className="w-[40px] max-w-[40px] h-full flex items-center justify-center">
                 <Checkbox
                     checked={table.getIsAllRowsSelected()}
-                    // indeterminate={table.getIsSomeRowsSelected()}
-                    onChange={table.getToggleAllRowsSelectedHandler()} //or getToggleAllPageRowsSelectedHandler
+                    onChange={table.getToggleAllRowsSelectedHandler()}
                 />
             </div>
         ),
@@ -37,13 +36,17 @@ const columns: ColumnDef<Row>[] = [
     },
     {
         accessorKey: 'task',
-        header: 'Task',
+        header: Header,
         size: 350,
         cell: EditableCell,
     },
     {
         accessorKey: 'status',
-        header: 'Status',
+        header: ({ column }) => (
+            <button onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+                Status ++
+            </button>
+        ),
         size: 200,
         minSize: 150,
         cell: StatusCell,
@@ -57,19 +60,24 @@ const columns: ColumnDef<Row>[] = [
     {
         accessorKey: 'assignees',
         header: 'Assignees',
-        // cell: (props: any) => <p>{props.getValue()}</p>,
         cell: AssigneeCell,
     },
 ];
 
 export default function TableContainer() {
     const [data, setData] = useState(dummyData[0].rows);
+    const [sorting, setSorting] = useState<SortingState>([]);
+
     const table = useReactTable({
         data,
         columns,
         getCoreRowModel: getCoreRowModel(),
+        getSortedRowModel: getSortedRowModel(),
         columnResizeMode: 'onChange',
-        // enableRowSelection: row => row.original.age > 18,
+        onSortingChange: setSorting,
+        state: {
+            sorting,
+        },
         enableMultiRowSelection: true,
         meta: {
             updateData: (rowIndex: any, columnId: any, value: any) => {
@@ -83,63 +91,68 @@ export default function TableContainer() {
     });
 
     return (
-        <section className="">
-            <div 
-                className="w-full border-l-[4px] border-green-500 rounded-md" 
-                style={{ width: table.getTotalSize() }}
-            >
-                {/* Headers */}
-                {table.getHeaderGroups().map((headerGroup) => (
-                    <div className="flex w-fit" key={headerGroup.id}>                   
-                        {/* Existing dynamic headers */}
-                        {headerGroup.headers.map((header) => (
-                            <div className="th" style={{ width: header.getSize() }} key={header.id}>
-                                {typeof header.column.columnDef.header === 'function'
-                                    ? header.column.columnDef.header(header.getContext())
-                                    : header.column.columnDef.header} 
-                                <div
-                                    onMouseDown={header.getResizeHandler()}
-                                    onTouchStart={header.getResizeHandler()}
-                                    className={clsx(
-                                        'resizer',
-                                        header.column.getIsResizing() && 'isResizing'
-                                    )}
-                                />
+        <section className="w-full">
+            {/* Scrollable container */}
+            <div className="overflow-x-auto">
+                {/* Apply table-layout: fixed to ensure consistent column sizes */}
+                <div 
+                    className="min-w-[1000px] border-l-[6px] border-green-500 rounded-md table-fixed"
+                >
+                    {/* Headers */}
+                    {table.getHeaderGroups().map((headerGroup) => (
+                        <div className="flex w-full" key={headerGroup.id}>                   
+                            {headerGroup.headers.map((header) => (
+                                <div 
+                                    className="relative flex items-center justify-center p-1.5 text-xs text-center border-r border-b border-borderDark"
+                                    style={{ width: header.getSize() }}
+                                    key={header.id}
+                                >
+                                    {typeof header.column.columnDef.header === 'function'
+                                        ? header.column.columnDef.header(header.getContext())
+                                        : header.column.columnDef.header} 
+                                    <div
+                                        onMouseDown={header.getResizeHandler()}
+                                        onTouchStart={header.getResizeHandler()}
+                                        className={clsx(
+                                            'resizer',
+                                            header.column.getIsResizing() && 'isResizing'
+                                        )}
+                                    />
+                                </div>
+                            ))}
+
+                            {/* Static "Add new Column" header */}
+                            <div className="relative flex-grow p-1.5 text-xs uppercase text-left border-r border-b border-borderDark" key="add-column-header">
+                                <div className='h-full w-fit flex items-center'>
+                                    Add new Column
+                                </div>
                             </div>
-                        ))}
-
-                        {/* New static header column */}
-                        <div className="th" style={{ width: '200px' }} key="header-column">
-                            Add new Column 
-                            <div className="resizer" />
                         </div>
-                    </div>
-                ))}
+                    ))}
 
-                {/* Rows */}
-                {table.getRowModel().rows.map((row) => (
-                    <div 
-                        className={clsx('tr', row.getIsSelected() ? 'selected' : null)} 
-                        key={row.id}
-                        onClick={row.getToggleSelectedHandler()}
-                    >
-                        {/* Existing dynamic cells */}
-                        {row.getVisibleCells().map((cell) => (
-                            <div 
-                                key={cell.id}
-                                // className="td" 
-                                className="h-8 border-r-[1px] border-b-[1px] border-gray-300 dark:border-borderDark"
-                                style={{ width: cell.column.getSize() }}
-                            >
-                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    {/* Rows */}
+                    {table.getRowModel().rows.map((row) => (
+                        <div 
+                            className={clsx('flex w-full', row.getIsSelected() ? 'selected' : null)} 
+                            key={row.id}
+                            onClick={row.getToggleSelectedHandler()}
+                        >
+                            {row.getVisibleCells().map((cell) => (
+                                <div 
+                                    key={cell.id}
+                                    className="h-8 border-r-[1px] border-b-[1px] border-gray-300 dark:border-borderDark"
+                                    style={{ width: cell.column.getSize() }}
+                                >
+                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                </div>
+                            ))}
+
+                            {/* Static "Add new Column" row */}
+                            <div className="h-8 flex-grow border-r-[1px] border-b-[1px] border-gray-300 dark:border-borderDark flex items-center justify-center" key={`role-${row.id}`}>
                             </div>
-                        ))}
-
-                        {/* New static role/column */}
-                        <div className="h-8 border-r-[1px] border-b-[1px] border-gray-300 dark:border-borderDark" style={{ width: '200px' }} key={`role-${row.id}`}>                            
                         </div>
-                    </div>
-                ))}
+                    ))}
+                </div>
             </div>
         </section>
     );
