@@ -14,7 +14,10 @@ const TopNav = () => {
   return (
     <header className="px-3 h-12 flex items-center justify-between fixed top-0 w-full z-10 bg-bgLight dark:bg-bgDark">
       <div className="text-md font-semibold hidden md:block">
-        Akira PM
+        <div>
+        
+        </div>
+        <span className="pl-6">Akira PM</span>
       </div>
 
       <div className="relative w-full max-w-sm md:ml-6">

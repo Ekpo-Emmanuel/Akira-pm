@@ -20,7 +20,7 @@ export default async function RootLayout({ children }: Readonly<{children: React
               <TopNav />
               <div className="flex flex-1 overflow-hidden pt-12">
                 <SideNav />
-                <section className="flex-1 bg-white dark:bg-workspaceDark border dark:border-borderDark overflow-y-auto mr-2 mb-2 rounded-md">
+                <section className="flex-1 bg-white dark:bg-workspaceDark border dark:border-borderDark overflow-y-auto">
                   {children}
                 </section>
               </div>
