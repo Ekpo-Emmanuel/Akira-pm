@@ -70,21 +70,50 @@ export type Table = {
   createdAt: number;
 }
 
-export type ColumnType = 'text' | 'number' | 'date' | 'select' | 'multiselect';
+export const COLUMN_TYPES = [
+  { value: 'text', label: 'Text' },
+  { value: 'number', label: 'Number' },
+  { value: 'date', label: 'Date' },
+  { value: 'select', label: 'Select' },
+  { value: 'multiselect', label: 'Multiselect' },
+  { value: 'status', label: 'Status' },
+  { value: 'people', label: 'People' },
+  { value: 'date_timeline', label: 'Date Timeline' },
+  { value: 'priority', label: 'Priority' },
+  { value: 'checkbox_group', label: 'Checkbox Group' },
+  { value: 'label', label: 'Label' },
+];
+
+export type ColumnType = 
+  | 'text' 
+  | 'number' 
+  | 'date' 
+  | 'select' 
+  | 'multiselect' 
+  | 'status' 
+  | 'people' 
+  | 'date_timeline' 
+  | 'priority' 
+  | 'checkbox_group' 
+  | 'label';
 
 export type Column = {
   id: string;
   name: string;
   type: ColumnType;
-  options?: StatusOption[];
+  options?: StatusOption[] | PriorityOption[] | LabelOption[];
 }
 
 export type Row = {
   id: string;
   task: string;
-  status: StatusOption;
-  dueDate: string;
-  assignees: string[];
+  status?: StatusOption;
+  dueDate?: string;
+  assignees?: string[];
+  dateTimeline?: { start: string; end: string }; 
+  priority?: PriorityOption;
+  checkboxGroup?: string[]; 
+  labels?: LabelOption[];
   [key: string]: any;
 }
 
@@ -107,7 +136,17 @@ export type statusOptions = {
   color: string;
 }
 
+export type PriorityOption = {
+  id: string;
+  name: string;
+  color: string;
+};
 
+export type LabelOption = {
+  id: string;
+  name: string;
+  color: string;
+};
 
 // Update the Task type to include subItems
 export type Task = {
