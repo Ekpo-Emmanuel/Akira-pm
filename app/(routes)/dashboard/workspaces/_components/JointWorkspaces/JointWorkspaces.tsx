@@ -197,7 +197,8 @@ export default function JointWorkspaces(props: WorkspaceSearchProps) {
         {filteredWorkspaces.length > 0 ? 
           filteredWorkspaces.map((workspace, index) => (
             <Link href={`/dashboard/workspaces/${workspace._id}`} key={index}>
-              <div className="border dark:border-borderDark dark:hover:bg-borderDark rounded-lg p-3 grid gap-5">
+              {/* Workspace Item starts here */}
+              <div className="border dark:bg-bgDark dark:border-borderDark rounded-2xl p-3 grid gap-5">
                 <div className="flex items-center justify-between">
                   <div
                     className="h-[36px] w-[36px] text-md text-white rounded-lg flex items-center justify-center"
@@ -248,12 +249,12 @@ export default function JointWorkspaces(props: WorkspaceSearchProps) {
                     ) : (
                       <>
                         <p className="text-xs text-gray-500">{truncateDescription(workspaceDescription[index])}</p>
-                        <button
+                        {/* <button
                           className="flex items-center justify-center rounded-md hover:bg-borderDark h-[26px] w-[26px] cursor-pointer"
                           onClick={() => handleEditDescription(index)}
                         >
                           <Pencil size={14} />
-                        </button>
+                        </button> */}
                       </>
                     )}
                   </div>
@@ -261,7 +262,8 @@ export default function JointWorkspaces(props: WorkspaceSearchProps) {
               </div>
             </Link>
           )) :
-          <div className="col-span-2 flex flex-col gap-2  items-center justify-center h-full w-full bg-bgLight dark:bg-borderDark rounded-md py-10 md:py-20">
+          // if no space is found in search
+          <div className="col-span-2 flex flex-col gap-2  items-center justify-center h-full w-full bg-bgLight dark:dark:bg-bgDark rounded-2xl py-10 md:py-20">
             <h1 className="text-5xl">🪐</h1>
             <p className="text-xs"> No Spaces found </p>
           </div>
