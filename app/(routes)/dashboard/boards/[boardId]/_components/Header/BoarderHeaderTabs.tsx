@@ -29,16 +29,16 @@ export default function BoarderHeaderTabs(props: BoarderHeaderTabsProps) {
   };
 
   return (
-    <div className="p-4">
-      <div className="flex items-center border-b-[1px] dark:border-borderDark">
+    <div className="">
+      <div className="px-4 flex items-center border-b-[1px] dark:border-borderDark">
         {tabs.map((tab, index) => (
           <button
             key={index}
             onClick={() => handleTabClick(index)}
             className={clsx(
-              'px-4 py-2 text-sm font-medium',
+              'px-2 h-6 text-xs font-medium dark:hover:bg-borderDark rounded-md',
               activeTab === index
-                ? 'text-black dark:text-white border-b-[2px] border-blue-500'
+                ? 'text-black dark:text-white underline underline-offset-8 decoration-1 decoration-blue-500 dark:decoration-blue-400'
                 : 'text-gray-600 dark:text-gray-400 '
             )}
           >
