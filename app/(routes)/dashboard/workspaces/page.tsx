@@ -89,7 +89,7 @@ export default function Page() {
       <Header />
       <div>
         <div className="h-full">
-          <div className="p-4 lg:py-10 lg:px-8 lg:pl-12">  
+          <div className="py-4 lg:py-10 lg:px-8">  
             <JointWorkspaces 
               handleCreateWorkspace={handleCreateWorkspace}
               handleDeleteWorkspace={handleDeleteWorkspace}
