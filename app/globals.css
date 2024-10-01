@@ -140,7 +140,7 @@
   cursor: col-resize;
   user-select: none;
   touch-action: none;
-  border-radius: 6px;
+  border-radius: 3px;
 }
 
 /* Resizer when Resizing */
@@ -152,4 +152,25 @@
 /* Resizer on Hover */
 *:hover > .resizer {
   opacity: 1;
+}
+
+
+
+
+
+
+.header-with-remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Adjust the remove button icon */
+.header-with-remove .remove-btn {
+  margin-left: 0.5rem;
+  color: #ff4d4f; /* Red color for the remove button */
+}
+
+.header-with-remove .remove-btn:hover {
+  color: #d9363e; /* Darker red on hover */
 }
