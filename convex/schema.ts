@@ -61,21 +61,22 @@ export default defineSchema({
     boardId: v.id("boards"),
     name: v.string(),
     description: v.optional(v.string()),
-    columns: v.array(
-      v.object({
+    columns: v.array(v.object({
+      id: v.string(),
+      name: v.string(),
+      type: v.string(),
+      config: v.optional(v.any())
+    })),
+    groups: v.array(v.object({
+      id: v.string(),
+      name: v.string(),
+      rows: v.array(v.object({
         id: v.string(),
-        name: v.string(),
-        type: v.string(), 
-        config: v.optional(v.any()), 
-      })
-    ),
-    rows: v.array(
-      v.object({
-        id: v.string(),
-        cells: v.object({}),  
-      })
-    ),
+        cells: v.object({})
+      }))
+    })),
     createdBy: v.id("users"),
+    createdAt: v.number(),
     updatedAt: v.number(),
   }).index("by_boardId", ["boardId"]),
    
